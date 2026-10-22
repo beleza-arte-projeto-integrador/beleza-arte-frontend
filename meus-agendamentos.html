@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Agendamentos | Beleza & Arte</title>
+    <link rel="stylesheet" href="css/meus-agendamentos.css">
+    <link rel="stylesheet" href="css/notificacoes-cancelamento.css">
+</head>
+<body>
+    <header class="cabecalho">
+        <a href="index.html" class="logo">
+            <img src="images/logo.png" alt="Beleza & Arte">
+            <div>
+                <strong>
+                    BELEZA & ARTE
+                </strong>
+                <span>
+                    SALÃO DE BELEZA
+                </span>
+            </div>
+        </a>
+        <a href="agendamento.html" class="voltar">
+            ← Voltar para agendamento
+        </a>
+    </header>
+
+    <main class="pagina-agendamentos">
+        <section class="container-agendamentos">
+            <div id="dados-profissional" class="dados-profissional">
+            </div>
+
+            <div class="acoes-profissional">
+                <a href="perfil-profissional.html" class="botao-editar-profissional">
+                    ✎ EDITAR MEU PERFIL
+                </a>
+                <a href="historico-cancelamentos.html" class="botao-editar-profissional">
+                    ↻ HISTÓRICO DE CANCELAMENTOS
+                </a>
+                <button type="button" id="botao-excluir-profissional" class="botao-excluir-profissional">
+                    🗑 EXCLUIR MEU CADASTRO
+                </button>
+            </div>
+
+            <div class="titulo-pagina">
+                <span>
+                    ▣
+                </span>
+                <div>
+                    <h1>
+                        MEUS AGENDAMENTOS
+                    </h1>
+                    <p>
+                        Confira seus horários agendados.
+                    </p>
+                </div>
+            </div>
+
+            <div id="lista-agendamentos" class="lista-agendamentos">
+            </div>
+        </section>
+    </main>
+
+    <script src="js/meus-agendamentos.js"></script>
+    <script src="js/notificacao-desistencia.js"></script>
+    <script src="js/cancelamentos.js"></script>
+    <script src="js/historico-cancelamentos.js"></script>
+</body>
+</html>

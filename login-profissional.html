@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Entrar | Beleza & Arte</title>
+
+    <link
+        rel="stylesheet"
+        href="css/login-profissional.css"
+    >
+</head>
+
+<body>
+    <header class="cabecalho">
+        <a href="index.html" class="logo">
+            <img
+                src="images/logo.png"
+                alt="Beleza & Arte"
+            >
+
+            <div>
+                <strong>BELEZA & ARTE</strong>
+                <span>SALÃO DE BELEZA</span>
+            </div>
+        </a>
+
+        <a href="index.html" class="voltar">
+            ← Voltar
+        </a>
+    </header>
+
+    <main class="pagina-login">
+        <section class="login-container">
+            <div class="icone-login">
+                ✂
+            </div>
+
+            <h1>
+                ÁREA DA PROFISSIONAL
+            </h1>
+
+            <p>
+                Entre para visualizar seus agendamentos.
+            </p>
+
+            <form id="formLoginProfissional">
+                <div class="campo">
+                    <label for="usuario">
+                        Nome de usuário
+                    </label>
+
+                    <input
+                        type="text"
+                        id="usuario"
+                        placeholder="Digite seu usuário"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="senha">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="senha"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <div
+                    id="mensagemLogin"
+                    class="mensagem"
+                ></div>
+
+                <button
+                    type="submit"
+                    class="botao-entrar"
+                >
+                    ENTRAR
+                    <strong>→</strong>
+                </button>
+            </form>
+
+            <div class="link-cadastro">
+                <span>
+                    Ainda não possui uma conta?
+                </span>
+
+                <a href="cadastro-profissional.html">
+                    CADASTRE-SE
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/login-profissional.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento | Beleza & Arte</title>
+    <link rel="stylesheet" href="css/agendamento.css">
+</head>
+
+<body>
+    <header>
+        <div class="conteiner">
+            <div class="logo">
+                <img src="images/logo.png" alt="">
+                <div>
+                    <h2>BELEZA & ARTE</h2>
+                    <span>SALÃO DE BELEZA</span>
+                </div>
+            </div>
+
+            <li class="menu-profissional">
+                <span class="titulo-area-profissional">
+                    ÁREA PROFISSIONAL
+                </span>
+
+                <div class="opcoes-profissional">
+                    <a href="login-profissional.html" class="botao-profissional">ENTRAR</a>
+                    <a href="cadastro-profissional.html" class="botao-profissional"> CADASTRAR</a>
+                </div>
+            </li>
+        </div>
+    </header>
+
+    <section class="banner" id="inicio">
+        <div class="banner-image">
+            <img src="images/banner/banner.png" alt="">
+        </div>
+
+        <div class="conteiner">
+            <div class="texto">
+                <h1>AGENDE<strong>SEU HORÁRIO</strong></h1>
+                <p> Reserve um momento só seu.<br>Estamos prontos para realçar<br>a sua beleza!</p>
+
+                <div class="caminho-navegacao">
+                    <a href="index.html" class="navegacao-inicio">
+                        <span class="icone-voltar">←</span>
+                        <span>Início</span>
+                    </a>
+
+                    <span class="navegacao-divisor">></span>
+
+                    <span class="navegacao-atual">
+                        Agendamento
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="secao-agendar">
+        <div class="container">
+            <div class="seco-titulo">
+                <h2>FAÇA SEU AGENDAMENTO</h2>
+                <span></span>
+            </div>
+
+            <div class="etapas" aria-label="Etapas do agendamento">
+                <div class="etapa ativa" data-etapa="1">
+                    <span>1</span>
+                    <small>SERVIÇO</small>
+                </div>
+
+                <div class="linha-progresso"></div>
+
+                <div class="etapa" data-etapa="2">
+                    <span>2</span>
+                    <small>PROFISSIONAL</small>
+                </div>
+
+                <div class="linha-progresso"></div>
+
+                <div class="etapa" data-etapa="3">
+                    <span>3</span>
+                    <small>DATA E HORÁRIO</small>
+                </div>
+
+                <div class="linha-progresso"></div>
+
+                <div class="etapa" data-etapa="4">
+                    <span>4</span>
+                    <small>SEUS DADOS</small>
+                </div>
+
+                <div class="linha-progresso"></div>
+
+                <div class="etapa" data-etapa="5">
+                    <span>5</span>
+                    <small>CONFIRMAÇÃO</small>
+                </div>
+            </div>
+
+            <div class="painel-agendamento">
+                <div class="bloco-agendamento">
+                    <div class="etapa-agendamento ativa" data-painel="1">
+                        <div class="titulo-etapa">
+                            <h3>1. ESCOLHA O SERVIÇO</h3>
+                            <p>Selecione um ou mais serviços para continuar.</p>
+                        </div>
+
+                        <div class="lista-servico">
+                            <label class="opcao-servico">
+                                <input type="checkbox" name="servico" value="Corte"
+                                    data-preco="50">
+                                <span class="radio"></span>
+                                <img src="images/servicos/servicos-corte.png" alt="Corte">
+
+                                <span class="informacao-servico">
+                                    <strong>Corte de cabelo</strong>
+                                    <small>
+                                        corte de cabelo.
+                                    </small>
+                                </span>
+
+                                <span class="preco">R$ 50,00</span>
+                            </label>
+
+                            <label class="opcao-servico">
+                                <input type="checkbox" name="servico" value="Depilacao"
+                                    data-preco="120">
+                                <span class="radio"></span>
+                                <img src="images/profissionais/depilacao.png" alt="Depilacao">
+
+                                <span class="informacao-servico">
+                                    <strong>Depilação</strong>
+                                    <small>
+                                        depile agora! sua peluda!.
+                                    </small>
+                                </span>
+
+                                <span class="preco">R$ 120,00</span>
+                            </label>
+
+                            <label class="opcao-servico">
+                                <input type="checkbox" name="servico" value="Mechas / Coloração"
+                                    data-preco="250">
+                                <span class="radio"></span>
+                                <img src="images/profissionais/mechas-coloracao.png" alt="Mechas e coloração">
+
+                                <span class="informacao-servico">
+                                    <strong>MECHAS / COLORAÇÃO</strong>
+                                    <small>
+                                        Transforme seu visual com mechas, coloração e tonalizantes.
+                                    </small>
+                                </span>
+
+                                <span class="preco">R$ 250,00</span>
+                            </label>
+
+                            <label class="opcao-servico">
+                                <input type="checkbox" name="servico" value="Manicure" data-preco="60">
+                                <span class="radio"></span>
+                                <img src="images/profissionais/manicure.png" alt="Manicure">
+
+                                <span class="informacao-servico">
+                                    <strong>Manicure</strong>
+                                    <small>
+                                        Cuidados completos para unhas lindas e bem cuidadas.
+                                    </small>
+                                </span>
+
+                                <span class="preco">R$ 60,00</span>
+                            </label>
+
+                            <label class="opcao-servico">
+                                <input type="checkbox" name="servico" value="Escova / Tratamentos"
+                                    data-preco="120">
+                                <span class="radio"></span>
+                                <img src="images/profissionais/escova-tratamentos.png" alt="Escova / Tratamentos">
+
+                                <span class="informacao-servico">
+                                    <strong>Escova / Tratamentos</strong>
+                                    <small>
+                                        Escova perfeita e tratamentos para todos os tipos de cabelo.
+                                    </small>
+                                </span>
+
+                                <span class="preco">R$ 120,00</span>
+                            </label>
+
+                            <label class="opcao-servico">
+                                <input type="checkbox" name="servico" value="Limpeza de pele"
+                                    data-preco="150">
+                                <span class="radio"></span>
+                                <img src="images/profissionais/limpeza-pele.png" alt="Limpeza de pele">
+
+                                <span class="informacao-servico">
+                                    <strong>Limpeza de pele</strong>
+                                    <small>
+                                        Limpeza de pele, hidratação e cuidados faciais.
+                                    </small>
+                                </span>
+
+                                <span class="preco">R$ 150,00</span>
+                            </label>
+
+                            <label class="opcao-servico">
+                                <input type="checkbox" name="servico" value="Maquiagem"
+                                    data-preco="200">
+                                <span class="radio"></span>
+                                <img src="images/profissionais/maquiagem.png" alt="Maquiagem">
+
+                                <span class="informacao-servico">
+                                    <strong>Maquiagem</strong>
+                                    <small>
+                                        Maquiagens para o dia a dia, eventos e ocasiões especiais.
+                                    </small>
+                                </span>
+
+                                <span class="preco">R$ 200,00</span>
+                            </label>
+                        </div>
+
+                        <button class="botao-proximo" type="button" data-proximo="2">
+                            <span>PRÓXIMO PASSO</span>
+                            <b>→</b>
+                        </button>
+                    </div>
+
+                    <div class="etapa-agendamento" data-painel="2">
+                        <div class="titulo-etapa">
+                            <span class="numero-etapa">02</span>
+
+                            <div>
+                                <h3>ESCOLHA O PROFISSIONAL</h3>
+                                <p>Escolha uma profissional para cada serviço selecionado.</p>
+                            </div>
+                        </div>
+
+                        <div id="profissionais-por-servico" class="profissionais-por-servico"></div>
+
+                        <div class="botoes-navegacao">
+                            <button class="botao-voltar" type="button" data-voltar="1">
+                                <b>←</b>
+                                <span> VOLTAR</span>
+                            </button>
+
+                            <button class="botao-proximo" type="button" data-proximo="3">
+                                <span> PRÓXIMO PASSO</span>
+                                <b>→</b>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="etapa-agendamento" data-painel="3">
+                        <div class="titulo-etapa">
+                            <h3>3. DATA E HORÁRIO</h3>
+                            <p>Escolha o dia e horário para cada serviço.</p>
+                        </div>
+
+                        <div id="agenda-por-servico" class="agenda-por-servico">
+                        </div>
+
+                        <div class="botoes-navegacao">
+                            <button class="botao-voltar" type="button" data-voltar="2">
+                                <b>←</b>
+                                <span>VOLTAR</span>
+                            </button>
+
+                            <button class="botao-proximo" type="button" data-proximo="4">
+                                <span>PRÓXIMO PASSO</span>
+                                <b>→</b>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="etapa-agendamento" data-painel="4">
+                        <div class="titulo-etapa">
+                            <h3>4. SEUS DADOS</h3>
+                            <p>Preencha seus dados para finalizar o agendamento.</p>
+                        </div>
+
+                        <div class="campos-formulario">
+                            <label>
+                                <span>NOME COMPLETO</span>
+                                <input id="nome-cliente" type="text" placeholder="Seu nome"
+                                    autocomplete="name">
+                            </label>
+
+                            <label>
+                                <span>TELEFONE</span>
+                                <input id="telefone-cliente" type="tel"
+                                    placeholder="(11) 12345-6789" autocomplete="tel">
+                            </label>
+
+                            <label class="campo-cheio">
+                                <span>E-MAIL</span>
+                                <input id="email-cliente" type="email"
+                                    placeholder="seuemail@gmail.com" autocomplete="email">
+                            </label>
+                        </div>
+
+                        <div class="botoes-navegacao">
+                            <button class="botao-voltar" type="button" data-voltar="3">
+                                <b>←</b>
+                                <span>VOLTAR</span>
+                            </button>
+
+                            <button class="botao-proximo" type="button" data-proximo="5">
+                                <span>REVISAR AGENDAMENTO</span>
+                                <b>→</b>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="etapa-agendamento" data-painel="5">
+                        <div class="titulo-etapa">
+                            <h3>5. CONFIRMAÇÃO</h3>
+                            <p>Confira os dados do seu agendamento antes de confirmar.</p>
+                        </div>
+
+                        <div class="caixa-confirmacao" id="caixa-confirmacao"></div>
+
+                        <div class="botoes-navegacao">
+                            <button class="botao-voltar" type="button" data-voltar="4">
+                                <b>←</b>
+                                <span>VOLTAR</span>
+                            </button>
+
+                            <button class="botao-confirmar" type="button" id="confirmar-agendamento"> CONFIRMAR AGENDAMENTO </button>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="caixa-resumo">
+                    <div class="avaliacao-estrelas"></div>
+                    <h3>SEU AGENDAMENTO</h3>
+
+                    <div class="icone-calendario" aria-hidden="true">
+                        <span>▣</span>
+                        <b>◷</b>
+                    </div>
+
+                    <div id="sem-agendamento">
+                        <strong>Nenhum serviço selecionado</strong>
+                        <p> Escolha um serviço ao lado<br> para começar seu agendamento.</p>
+                    </div>
+
+                    <div id="conteudo-resumo" class="conteudo-resumo">
+                        <div>
+                            <span>Serviço</span>
+                            <strong id="detalhe-servico">—</strong>
+                        </div>
+
+                        <div>
+                            <span>Profissional</span>
+                            <strong id="detalhe-profissional">—</strong>
+                        </div>
+
+                        <div>
+                            <span>Data</span>
+                            <strong id="detalhe-data">—</strong>
+                        </div>
+
+                        <div>
+                            <span>Horário</span>
+                            <strong id="detalhe-hora">—</strong>
+                        </div>
+
+                        <div>
+                            <span>Total</span>
+                            <strong id="detalhe-preco">R$ 0,00</strong>
+                        </div>
+                    </div>
+
+                    <div class="separador-resumo"></div>
+
+                    <div class="ajuda">
+                        <h4>DÚVIDAS?</h4>
+                        <p> Fale com a nossa equipe<br> e agende pelo whatsApp. </p>
+
+                        <a class="botao-whatsapp" href="https://wa.me/5511987658421" target="_blank" rel="noopener">
+                            <span>◉</span> FALAR PELO WHATSAPP
+                        </a>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="beneficios-agendamento">
+                <div>
+                    <span class="icone-beneficio">♙</span>
+                    <span> ATENDIMENTO<br> PERSONALIZADO </span>
+                </div>
+
+                <div>
+                    <span class="icone-beneficio">✧</span>
+                    <span> PROFISSIONAIS<br> EXPERIENTES</span>
+                </div>
+
+                <div>
+                    <span class="icone-beneficio">♙</span>
+                    <span> PRODUTOS DE<br> ALTA QUALIDADE</span>
+                </div>
+
+                <div>
+                    <span class="icone-beneficio">♡</span>
+                    <span> AMBIENTE<br> ACOLHEDOR</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="secao-meus-agendamentos" id="meus-agendamentos">
+            <div class="container">
+                <div class="titulo-meus-agendamentos">
+                    <div class="icone-titulo-agendamentos">▣</div>
+
+                    <div>
+                        <h2>MEUS AGENDAMENTOS</h2>
+                        <p> Confira todos os seus horários agendados.</p>
+                    </div>
+                </div>
+
+                <div class="acoes-meus-agendamentos">
+                    <button type="button" id="botao-excluir-todos-agendamentos" class="botao-excluir-todos-agendamentos">
+                        🗑 EXCLUIR TODOS OS MEUS AGENDAMENTOS
+                    </button>
+                </div>
+
+                <div id="lista-meus-agendamentos" class="lista-meus-agendamentos"></div>
+            </div>
+        </section>
+    </section>
+
+    <footer class="rodape">
+        <div class="container grid-rodape">
+            <div class="identidade-rodape">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.png" alt="Logo Beleza & Arte">
+
+                    <div>
+                        <strong>BELEZA & ARTE</strong>
+                        <span>SALÃO DE BELEZA</span>
+                    </div>
+                </a>
+
+                <p>Aqui, cada detalhe é pensado para<br>realçar a sua beleza e elevar<br>sua autoestima.</p>
+
+                <div class="redes-sociais">
+                    <a href="#" aria-label="Instagram">◎</a>
+                    <a href="#" aria-label="Facebook">f</a>
+                    <a href="#" aria-label="TikTok">♪</a>
+                </div>
+            </div>
+
+            <div class="coluna-rodape">
+                <h4>CONTATO</h4>
+                <p>☎ &nbsp; (11) 98765-8421</p>
+                <p>✉ &nbsp; contato@belezaearte.com.br</p>
+                <p>⌖ &nbsp; Rua das Flores, 123<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jardim América, São Paulo – SP</p>
+            </div>
+
+            <div class="footer-column">
+                <h4>HORÁRIO DE ATENDIMENTO</h4>
+
+                <p class="schedule">
+                    <span>Segunda a Sexta</span>
+                    <b>9h às 20h</b>
+                </p>
+
+                <p class="schedule">
+                    <span>Sábado</span>
+                    <b>9h às 18h</b>
+                </p>
+
+                <p class="schedule">
+                    <span>Domingo</span>
+                    <b>Fechado</b>
+                </p>
+            </div>
+        </div>
+
+        <div class="container copyright"> © 2026 Todos os direitos reservados.</div>
+    </footer>
+
+    <script src="js/agendamento.js"></script>
+    <script src="js/cancelamentos.js"></script>
+    <script src="js/notificacao-desistencia.js"></script>
+    <script src="js/historico-cancelamentos.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+.notificacao-cancelamento-beleza-arte {
+    position: fixed;
+    top: 100px;
+    right: 25px;
+    width: min(440px, calc(100vw - 30px));
+    min-height: 100px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px 45px 20px 20px;
+    background: linear-gradient(135deg, #111111, #1d1d1d);
+    border: 1px solid rgba(214, 160, 56, .8);
+    border-radius: 12px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, .35 );
+    color: white;
+    z-index: 999999;
+    opacity: 0;
+    transform: translateX(120%);
+    transition: .4s ease;
+}
+
+.notificacao-cancelamento-beleza-arte.mostrar {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.icone-notificacao-cancelamento {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:rgba(214, 160, 56, .15);
+    border: 1px solid rgba(214, 160, 56, .5);
+    color:#f0c96b;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.conteudo-notificacao-cancelamento {
+    flex: 1;
+    min-width: 0;
+}
+
+.conteudo-notificacao-cancelamento strong {
+    color: #f0c96b;
+}
+
+.conteudo-notificacao-cancelamento > strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 8px;
+    letter-spacing: .5px;
+}
+
+.conteudo-notificacao-cancelamento p {
+    margin: 0;
+    color: #eeeeee;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.fechar-notificacao-cancelamento {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: transparent;
+    color: #aaaaaa;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.fechar-notificacao-cancelamento:hover {
+    color: white;
+}
+
+@media (
+    max-width: 600px
+) {
+    .notificacao-cancelamento-beleza-arte {
+        top: 85px;
+        left: 15px;
+        right: 15px;
+        width: auto;
+        padding: 17px 40px 17px 15px;
+    }
+
+    .icone-notificacao-cancelamento {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        font-size: 18px;
+    }
+
+    .conteudo-notificacao-cancelamento
+    > strong {
+        font-size: 13px;
+    }
+
+    .conteudo-notificacao-cancelamento p {
+        font-size: 12px;
+    }
+}
+
+.aviso-cancelamento-cliente {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    width: 390px;
+    max-width: calc(100% - 30px);
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 18px 20px;
+    background: #ffffff;
+    border-left: 4px solid #d6a038;
+    border-radius: 12px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    z-index: 99999;
+    animation: aparecerNotificacao .35s ease;
+}
+
+.icone-notificacao {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(214, 160, 56, .15);
+    color: #d6a038;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.conteudo-notificacao {
+    flex: 1;
+}
+
+.conteudo-notificacao strong {
+    color: #141414;
+}
+
+.conteudo-notificacao > strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+.conteudo-notificacao p {
+    margin: 0 0 7px;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.conteudo-notificacao small {
+    color: #888;
+    font-size: 12px;
+}
+
+.fechar-notificacao {
+    border: 0;
+    background: transparent;
+    color: #999;
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.fechar-notificacao:hover {
+    color: #141414;
+}
+
+@keyframes aparecerNotificacao {
+    from {
+        opacity: 0;
+        transform: translateY(-15px) translateX(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) translateX(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .aviso-cancelamento-cliente {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        width: auto;
+    }
+}

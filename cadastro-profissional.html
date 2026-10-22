@@ -1,0 +1,603 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cadastrar Profissional | Beleza & Arte</title>
+
+    <link
+        rel="stylesheet"
+        href="css/cadastro-profissional.css"
+    >
+</head>
+
+<body>
+    <header class="cabecalho">
+        <a href="index.html" class="logo">
+            <img
+                src="images/logo.png"
+                alt="Beleza & Arte"
+            >
+
+            <div>
+                <strong>BELEZA & ARTE</strong>
+                <span>
+                    SALÃO DE BELEZA
+                </span>
+            </div>
+        </a>
+
+        <a
+            href="agendamento.html"
+            class="voltar"
+        >
+            ← Voltar para o agendamento
+        </a>
+    </header>
+
+    <main class="pagina-cadastro">
+        <section class="cadastro-container">
+            <div class="cabecalho-cadastro">
+                <span class="icone-profissional">
+                    ✂
+                </span>
+
+                <h1>
+                    CADASTRO DE PROFISSIONAL
+                </h1>
+
+                <p>
+                    Crie seu perfil profissional
+                    na plataforma Beleza & Arte.
+                </p>
+            </div>
+
+            <form
+                id="formCadastroProfissional"
+                novalidate
+            >
+                <div class="titulo-secao">
+                    <span>01</span>
+
+                    <div>
+                        <h2>Dados pessoais</h2>
+                        <p>Informe seus dados profissionais.</p>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="campo campo-grande">
+                        <label for="nome">
+                            Nome completo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nome"
+                            name="nome"
+                            placeholder="Ex.: Maria da Silva"
+                            autocomplete="name"
+                            required
+                        >
+
+                        <small
+                            class="erro"
+                            id="erro-nome"
+                        ></small>
+                    </div>
+
+                    <div class="campo">
+                        <label for="cpf">
+                            CPF
+                        </label>
+
+                        <input
+                            type="text"
+                            id="cpf"
+                            name="cpf"
+                            placeholder="000.000.000-00"
+                            maxlength="14"
+                            required
+                        >
+
+                        <small
+                            class="erro"
+                            id="erro-cpf"
+                        ></small>
+                    </div>
+
+                    <div class="campo">
+                        <label for="telefone">
+                            Telefone
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="telefone"
+                            name="telefone"
+                            placeholder="(11) 99999-9999"
+                            maxlength="15"
+                            required
+                        >
+
+                        <small
+                            class="erro"
+                            id="erro-telefone"
+                        ></small>
+                    </div>
+
+                    <div class="campo campo-grande">
+                        <label for="email">
+                            E-mail
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="seuemail@email.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                        <small
+                            class="erro"
+                            id="erro-email"
+                        ></small>
+                    </div>
+                </div>
+
+                <div class="titulo-secao">
+                    <span>02</span>
+
+                    <div>
+                        <h2>Dados profissionais</h2>
+
+                        <p>
+                            Conte um pouco sobre sua atuação.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="campo campo-grande">
+                        <label for="especialidade">
+                            Especialidade
+                        </label>
+
+                        <select
+                            id="especialidade"
+                            name="especialidade"
+                            required
+                        >
+                            <option value="">
+                                Selecione sua especialidade
+                            </option>
+
+                            <option value="Cabeleireira">
+                                Cabeleireira
+                            </option>
+
+                            <option value="Manicure">
+                                Manicure
+                            </option>
+
+                            <option value="Esteticista">
+                                Esteticista
+                            </option>
+
+                            <option value="Maquiadora">
+                                Maquiadora
+                            </option>
+
+                            <option value="Designer de Sobrancelhas">
+                                Designer de Sobrancelhas
+                            </option>
+                        </select>
+
+                        <small
+                            class="erro"
+                            id="erro-especialidade"
+                        ></small>
+                    </div>
+
+                    <div class="campo campo-grande">
+                        <label for="experiencia">
+                            Tempo de experiência
+                        </label>
+
+                        <select
+                            id="experiencia"
+                            name="experiencia"
+                            required
+                        >
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            <option value="Menos de 1 ano">
+                                Menos de 1 ano
+                            </option>
+
+                            <option value="1 a 3 anos">
+                                1 a 3 anos
+                            </option>
+
+                            <option value="4 a 7 anos">
+                                4 a 7 anos
+                            </option>
+
+                            <option value="8 a 10 anos">
+                                8 a 10 anos
+                            </option>
+
+                            <option value="Mais de 10 anos">
+                                Mais de 10 anos
+                            </option>
+                        </select>
+
+                        <small
+                            class="erro"
+                            id="erro-experiencia"
+                        ></small>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>
+                        Serviços realizados
+                    </label>
+
+                    <div class="servicos">
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Corte"
+                                data-especialidades="Cabeleireira"
+                            >
+                            <span>Corte</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Coloração"
+                                data-especialidades="Cabeleireira"
+                            >
+                            <span>Coloração</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Mechas"
+                                data-especialidades="Cabeleireira"
+                            >
+                            <span>Mechas</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Escova"
+                                data-especialidades="Cabeleireira"
+                            >
+                            <span>Escova</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Penteados"
+                                data-especialidades="Cabeleireira,Maquiadora"
+                            >
+                            <span>Penteados</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Tratamentos"
+                                data-especialidades="Cabeleireira"
+                            >
+                            <span>Tratamentos</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Manicure"
+                                data-especialidades="Manicure"
+                            >
+                            <span>Manicure</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Manicure"
+                                data-especialidades="Manicure"
+                            >
+                            <span>Pedicure</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Manicure"
+                                data-especialidades="Manicure"
+                            >
+                            <span>Unhas de gel</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Limpeza de pele"
+                                data-especialidades="Esteticista"
+                            >
+                            <span>Limpeza de pele</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Limpeza de pele"
+                                data-especialidades="Esteticista"
+                            >
+                            <span>Controle de acne</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Limpeza de pele"
+                                data-especialidades="Esteticista"
+                            >
+                            <span>Revitalização dos fios do couro cabeludo</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Limpeza de pele"
+                                data-especialidades="Esteticista"
+                            >
+                            <span>Hidratação </span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Limpeza de pele"
+                                data-especialidades="Esteticista"
+                            >
+                            <span>Peeling  </span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Maquiagem"
+                                data-especialidades="Maquiadora"
+                            >
+                            <span>Maquiagem</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Design de sobrancelhas"
+                                data-especialidades="Designer de Sobrancelhas"
+                            >
+                            <span>Design de sobrancelhas</span>
+                        </label>
+
+                        <label class="checkbox">
+                            <input
+                                type="checkbox"
+                                name="servicos"
+                                value="Depilação"
+                                data-especialidades="Esteticista,Depiladora"
+                            >
+                            <span>Depilação</span>
+                        </label>
+                    </div>
+
+                    <small
+                        class="erro"
+                        id="erro-servicos"
+                    ></small>
+                </div>
+
+                <div class="titulo-secao">
+                    <span>03</span>
+
+                    <div>
+                        <h2>
+                            Dados de acesso
+                        </h2>
+
+                        <p>
+                            Esses dados serão usados
+                            para entrar na plataforma.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="campo campo-grande">
+                        <label for="usuario">
+                            Nome de usuário
+                        </label>
+
+                        <input
+                            type="text"
+                            id="usuario"
+                            name="usuario"
+                            placeholder="Ex.: maria.silva"
+                            autocomplete="username"
+                            maxlength="30"
+                            required
+                        >
+
+                        <small class="dica">
+                            Use apenas letras, números,
+                            ponto, hífen ou underline.
+                        </small>
+
+                        <small
+                            class="erro"
+                            id="erro-usuario"
+                        ></small>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="campo">
+                        <label for="senha">
+                            Senha
+                        </label>
+
+                        <div class="campo-senha">
+                            <input
+                                type="password"
+                                id="senha"
+                                name="senha"
+                                placeholder="Crie uma senha"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="mostrar-senha"
+                                data-target="senha"
+                            >
+                                👁
+                            </button>
+                        </div>
+
+                        <div class="forca-senha">
+                            <div
+                                id="barraSenha"
+                                class="barra"
+                            ></div>
+                        </div>
+
+                        <small
+                            id="textoForcaSenha"
+                            class="dica"
+                        >
+                            A senha deve possuir pelo menos
+                            8 caracteres.
+                        </small>
+
+                        <small
+                            class="erro"
+                            id="erro-senha"
+                        ></small>
+                    </div>
+
+                    <div class="campo">
+                        <label for="confirmarSenha">
+                            Confirmar senha
+                        </label>
+
+                        <div class="campo-senha">
+                            <input
+                                type="password"
+                                id="confirmarSenha"
+                                name="confirmarSenha"
+                                placeholder="Digite a senha novamente"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="mostrar-senha"
+                                data-target="confirmarSenha"
+                            >
+                                👁
+                            </button>
+                        </div>
+
+                        <small
+                            class="erro"
+                            id="erro-confirmarSenha"
+                        ></small>
+                    </div>
+                </div>
+
+                <label class="termos">
+                    <input
+                        type="checkbox"
+                        id="termos"
+                        required
+                    >
+
+                    <span>
+                        Li e concordo com os termos
+                        de uso da plataforma.
+                    </span>
+                </label>
+
+                <small
+                    class="erro"
+                    id="erro-termos"
+                ></small>
+
+                <div
+                    id="mensagemCadastro"
+                    class="mensagem"
+                    role="alert"
+                ></div>
+
+                <button
+                    type="submit"
+                    class="botao-cadastrar"
+                >
+                    <span>
+                        CADASTRAR PROFISSIONAL
+                    </span>
+
+                    <strong>→</strong>
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>
+            © 2026 Beleza & Arte.
+            Todos os direitos reservados.
+        </p>
+    </footer>
+
+    <script src="js/cadastro-profissional.js"></script>
+</body>
+
+</html>
