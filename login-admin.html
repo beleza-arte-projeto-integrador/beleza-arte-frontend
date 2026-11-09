@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso administrativo | Beleza & Arte</title>
+    <link rel="stylesheet" href="css/painel-admin.css">
+</head>
+<body class="admin-login-page">
+    <header class="admin-header">
+        <a class="brand" href="index.html">
+            <img src="images/logo.png" alt="Beleza & Arte">
+            <span><strong>BELEZA & ARTE</strong><small>SALÃO DE BELEZA</small></span>
+        </a>
+        <a class="header-back" href="index.html">← Voltar ao site</a>
+    </header>
+    <main class="admin-login-main">
+        <section class="admin-login-card">
+            <div class="login-symbol">♙</div>
+            <p class="eyebrow">ACESSO RESTRITO</p>
+            <h1>Área do administrador</h1>
+            <p>Entre para gerenciar profissionais, agenda e resultados do salão.</p>
+            <div class="demo-access">
+                <strong>Acesso de demonstração</strong>
+                <span>E-mail: admin@belezaearte.com.br</span>
+                <span>Senha: admin123</span>
+            </div>
+            <form id="formLoginAdmin">
+                <label for="admin-email">E-mail de acesso<input id="admin-email" type="email" placeholder="administrador@email.com" autocomplete="username" required></label>
+                <label for="admin-password">Senha<input id="admin-password" type="password" placeholder="Digite sua senha" autocomplete="current-password" required></label>
+                <p id="admin-login-message" class="admin-login-message" role="alert"></p>
+                <button class="gold-button" type="submit">ENTRAR NO PAINEL <span>→</span></button>
+            </form>
+            <small class="privacy-note">Acesso exclusivo para a gestão da Beleza & Arte.</small>
+        </section>
+    </main>
+    <script src="js/login-admin.js"></script>
+</body>
+</html>
