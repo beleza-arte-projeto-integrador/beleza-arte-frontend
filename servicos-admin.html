@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços | Beleza & Arte</title>
+    <link rel="stylesheet" href="css/painel-admin.css">
+    <link rel="stylesheet" href="css/servicos-admin.css">
+</head>
+<body>
+    <header class="admin-header">
+        <a class="brand" href="painel-admin.html"><img src="images/logo.png" alt="Beleza & Arte"><span><strong>BELEZA & ARTE</strong><small>PAINEL DE GESTÃO</small></span></a>
+        <div class="header-user"><span class="avatar">A</span><span><strong>Administrador</strong><small>Gestão do salão</small></span><a href="index.html">Sair</a></div>
+    </header>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <p class="menu-label">MENU PRINCIPAL</p>
+            <a href="painel-admin.html"><span>▦</span> Visão geral</a>
+            <a href="profissionais-admin.html"><span>♙</span> Profissionais</a>
+            <a class="active" href="servicos-admin.html"><span>✦</span> Serviços</a>
+            <a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a>
+            <a href="pagamentos-admin.html"><span>R$</span> Pagamentos</a>
+            <a href="relatorios-admin.html"><span>▥</span> Relatórios</a>
+            <p class="menu-label">ATALHOS</p>
+            <a href="cadastro-profissional-admin.html"><span>＋</span> Cadastrar profissional</a>
+            <a href="agendamento.html"><span>＋</span> Novo agendamento</a>
+            <a href="index.html"><span>←</span> Voltar ao site</a>
+        </aside>
+        <main class="admin-main">
+            <div class="page-heading">
+                <div><p class="eyebrow">CATÁLOGO DO SALÃO</p><h1>Serviços</h1><p>Cadastre e gerencie os serviços oferecidos pela Beleza & Arte.</p></div>
+                <button class="gold-button" id="novo-servico" type="button">NOVO SERVIÇO <span>＋</span></button>
+            </div>
+
+            <section class="service-toolbar" aria-label="Busca e filtros">
+                <label class="search-box">⌕<input id="service-query" type="search" placeholder="Buscar serviço"></label>
+                <select id="service-filter" aria-label="Tipo de busca">
+                    <option value="all">Todos os campos</option>
+                    <option value="name">Nome</option>
+                    <option value="description">Descrição</option>
+                    <option value="category">Categoria</option>
+                    <option value="duration">Duração</option>
+                    <option value="price">Preço</option>
+                    <option value="created">Data de criação</option>
+                </select>
+                <button class="outline-button" id="clear-filter" type="button">LIMPAR</button>
+            </section>
+
+            <div id="service-message" class="service-message" role="alert" aria-live="polite"></div>
+            <section class="service-form-card panel-card" id="service-form-card" hidden>
+                <div class="panel-heading"><div><h2 id="service-form-title">Novo serviço</h2><p>Preencha todos os campos obrigatórios.</p></div><button class="close-button" id="cancel-service" type="button" aria-label="Fechar formulário">×</button></div>
+                <form id="service-form" novalidate>
+                    <input id="service-id" type="hidden">
+                    <div class="service-form-grid">
+                        <label class="admin-field">Nome<input id="service-name" type="text" required maxlength="120"><small class="erro" data-error-for="name"></small></label>
+                        <label class="admin-field">Categoria<input id="service-category" type="text" required maxlength="80"><small class="erro" data-error-for="category"></small></label>
+                        <label class="admin-field field-full">Descrição<textarea id="service-description" required maxlength="500" rows="3"></textarea><small class="erro" data-error-for="description"></small></label>
+                        <label class="admin-field">Preço (R$)<input id="service-price" type="number" min="0" step="0.01" required><small class="erro" data-error-for="price"></small></label>
+                        <label class="admin-field">Duração (minutos)<input id="service-duration" type="number" min="1" step="1" required><small class="erro" data-error-for="duration_minutes"></small></label>
+                        <label class="admin-field">Data de criação<input id="service-created" type="datetime-local" required><small class="erro" data-error-for="created"></small></label>
+                    </div>
+                    <div class="service-form-actions"><button class="outline-button" id="cancel-service-bottom" type="button">CANCELAR</button><button class="gold-button" id="save-service" type="submit">SALVAR SERVIÇO <span>→</span></button></div>
+                </form>
+            </section>
+
+            <section class="panel-card table-card service-list-card">
+                <div class="panel-heading"><div><h2>Serviços cadastrados</h2><p id="service-count">Carregando serviços...</p></div><span class="loading-indicator" id="service-loading" hidden>Carregando...</span></div>
+                <div class="service-table service-table-head"><span>Serviço</span><span>Categoria</span><span>Preço</span><span>Duração</span><span>Criação</span><span>Ações</span></div>
+                <div id="service-list"></div>
+            </section>
+        </main>
+    </div>
+    <script src="js/api/service-api.js"></script>
+    <script src="js/servicos-admin.js"></script>
+</body>
+</html>
