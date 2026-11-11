@@ -90,20 +90,6 @@ fetch("/api/searchSpecialty?specialty=Cabeleireira");
 
 Não é necessário criar um novo proxy para cada módulo. O [server.js](./server.js) encaminha todas as rotas iniciadas por `/api/` para a API base.
 
-## Endpoints do módulo de serviços
 
-| Operação | Método | Endpoint do backend |
-|---|---:|---|
-| Criar serviço | PUT | `/service/createServices` |
-| Atualizar serviço | POST | `/service/updateServices` |
-| Excluir serviço | DELETE | `/service/deleteServices?id={id}` |
-| Buscar por nome | GET | `/service/searchName?name={name}` |
-| Buscar por descrição | GET | `/service/searchDescription?description={description}` |
-| Buscar por duração | GET | `/service/searchDuration?duration_minutes={duration}` |
-| Buscar por preço | GET | `/service/searchPrice?price={price}` |
-| Buscar por categoria | GET | `/service/searchCategory?category={category}` |
-| Buscar pela criação | GET | `/service/searchCreated?searchCreation={date}` |
-
-No navegador, essas rotas usam o prefixo local `/api`, e o proxy adiciona `/v1/api/salao` automaticamente.
 
 
