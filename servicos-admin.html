@@ -46,7 +46,6 @@
                 <button class="outline-button" id="clear-filter" type="button">LIMPAR</button>
             </section>
 
-            <div id="service-message" class="service-message" role="alert" aria-live="polite"></div>
             <section class="service-form-card panel-card" id="service-form-card" hidden>
                 <div class="panel-heading"><div><h2 id="service-form-title">Novo serviço</h2><p>Preencha todos os campos obrigatórios.</p></div><button class="close-button" id="cancel-service" type="button" aria-label="Fechar formulário">×</button></div>
                 <form id="service-form" novalidate>
@@ -70,6 +69,21 @@
             </section>
         </main>
     </div>
+    <div id="delete-modal" class="delete-modal" hidden role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+        <div class="delete-modal-backdrop" data-close-delete-modal></div>
+        <div class="delete-modal-card">
+            <button class="delete-modal-close" type="button" data-close-delete-modal aria-label="Fechar confirmação">×</button>
+            <span class="delete-modal-icon">!</span>
+            <h2 id="delete-modal-title">Excluir serviço?</h2>
+            <p>Essa ação não poderá ser desfeita.</p>
+            <strong id="delete-service-name"></strong>
+            <div class="delete-modal-actions">
+                <button class="outline-button" type="button" data-close-delete-modal>Cancelar</button>
+                <button class="delete-confirm-button" id="confirm-delete-service" type="button">Excluir serviço</button>
+            </div>
+        </div>
+    </div>
+    <div id="service-notifications" class="service-notifications" role="status" aria-live="polite" aria-atomic="true"></div>
     <script src="js/api/service-api.js"></script>
     <script src="js/servicos-admin.js"></script>
 </body>
