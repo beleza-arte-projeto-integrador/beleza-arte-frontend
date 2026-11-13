@@ -1,337 +1,120 @@
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-        const form = document.getElementById("formCadastroProfissional");
-        const nome = document.getElementById("nome");
-        const cpf = document.getElementById("cpf");
-        const telefone = document.getElementById("telefone");
-        const email = document.getElementById("email");
-        const especialidade = document.getElementById("especialidade");
-        const servicos = document.querySelectorAll('input[name="servicos"]');
-
-        function atualizarServicosPorEspecialidade() {
-            const especialidadeSelecionada = especialidade.value;
-
-            servicos.forEach(servico => {
-                const especialidadesPermitidas = servico.dataset.especialidades ? servico.dataset.especialidades.split(",").map(item => item.trim()) : [];
-                const permitido = especialidadesPermitidas.includes(especialidadeSelecionada);
-                const label = servico.closest(".checkbox");
-
-                if (!especialidadeSelecionada) {
-                    label.style.display = "none";
-                    servico.checked = false;
-                    servico.disabled = true;
-                    return;
-                }
-
-                if (permitido) {
-                    label.style.display = "flex";
-                    servico.disabled = false;
-                } else {
-                    label.style.display = "none";
-                    servico.checked = false;
-                    servico.disabled = true;
-                }
-            });
-
-            document.getElementById("erro-servicos").textContent = "";
-        }
-
-        especialidade.addEventListener("change", atualizarServicosPorEspecialidade);
-
-        atualizarServicosPorEspecialidade();
-
-        const experiencia = document.getElementById("experiencia");
-        const usuario = document.getElementById("usuario");
-        const senha = document.getElementById("senha");
-        const confirmarSenha = document.getElementById("confirmarSenha");
-        const termos = document.getElementById("termos");
-        const mensagem = document.getElementById("mensagemCadastro");
-        const barraSenha = document.getElementById("barraSenha");
-        const textoForcaSenha = document.getElementById("textoForcaSenha");
-
-        function somenteNumeros(valor) {
-            return valor.replace(/\D/g, "");
-        }
-
-        function mostrarErro(campo, idErro, texto) {
-            campo.classList.add("invalido");
-            campo.classList.remove("valido");
-            document.getElementById(idErro).textContent = texto;
-        }
-
-        function limparErro(campo, idErro) {
-            campo.classList.remove("invalido");
-            campo.classList.add("valido");
-            document.getElementById(idErro).textContent = "";
-        }
-
-        function validarCPF(valor) {
-            const cpfNumeros = somenteNumeros(valor);
-
-            if (cpfNumeros.length !== 11) {
-                return false;
-            }
-
-            if (/^(\d)\1{10}$/.test(cpfNumeros)) {
-                return false;
-            }
-
-            let soma = 0;
-
-            for (let i = 0; i < 9; i++) {
-                soma += Number(cpfNumeros.charAt(i)) * (10 - i);
-            }
-
-            let resto = (soma * 10) % 11;
-
-            if (resto === 10 || resto === 11) {
-                resto = 0;
-            }
-
-            if (resto !== Number(cpfNumeros.charAt(9))) {
-                return false;
-            }
-
-            soma = 0;
-
-            for (let i = 0; i < 10; i++) {
-                soma += Number(cpfNumeros.charAt(i)) * (11 - i);
-            }
-
-            resto = (soma * 10) % 11;
-
-            if (resto === 10 || resto === 11) {
-                resto = 0;
-            }
-
-            return (resto === Number(cpfNumeros.charAt(10)));
-        }
-
-        cpf.addEventListener("input", () => {
-            let valor = somenteNumeros(cpf.value).slice(0, 11);
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-            cpf.value = valor;
-        });
-
-        telefone.addEventListener("input", () => {
-            let valor = somenteNumeros(telefone.value).slice(0, 11);
-
-            if (valor.length <= 10) {
-                valor = valor.replace(/(\d{2})(\d)/, "($1) $2");
-                valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
-            } else {
-                valor = valor.replace(/(\d{2})(\d)/, "($1) $2");
-                valor = valor.replace(/(\d{5})(\d)/, "$1-$2");
-            }
-
-            telefone.value = valor;
-        });
-
-        usuario.addEventListener("input", () => {
-            usuario.value = usuario.value.toLowerCase().replace(/[^a-z0-9._-]/g,).slice(0, 30);
-        });
-
-        function analisarSenha(valor) {
-            let pontos = 0;
-
-            if (valor.length >= 8) {
-                pontos++;
-            }
-
-            if (/[A-Z]/.test(valor)) {
-                pontos++;
-            }
-
-            if (/[a-z]/.test(valor)) {
-                pontos++;
-            }
-
-            if (/[0-9]/.test(valor)) {
-                pontos++;
-            }
-
-            if (/[^A-Za-z0-9]/.test(valor)) {
-                pontos++;
-            }
-
-            return pontos;
-        }
-
-        senha.addEventListener("input", () => {
-            const pontos = analisarSenha(senha.value);
-            const porcentagem = (pontos / 5) * 100;
-            barraSenha.style.width = porcentagem + "%";
-
-            if (pontos <= 1) {
-                textoForcaSenha.textContent = "Senha muito fraca.";
-            } else if (pontos === 2) {
-                textoForcaSenha.textContent = "Senha fraca.";
-            } else if (pontos === 3) {
-                textoForcaSenha.textContent = "Senha média.";
-            } else if (pontos === 4) {
-                textoForcaSenha.textContent = "Senha forte.";
-            } else {
-                textoForcaSenha.textContent = "Senha muito forte.";
-            }
-        });
-
-        document.querySelectorAll(".mostrar-senha").forEach(botao => {
-            botao.addEventListener("click", () => {
-                const id = botao.dataset.target;
-                const campo = document.getElementById(id);
-
-                if (campo.type === "password") {
-                    campo.type = "text";
-                    botao.textContent = "🙈";
-                } else {
-                    campo.type = "password";
-                    botao.textContent = "👁";
-                }
-            });
-        });
-
-        function usuarioJaExiste(nomeUsuario) {
-            const profissionais = JSON.parse(localStorage.getItem("belezaArteProfissionais")) || [];
-            return profissionais.some(profissional => profissional.usuario.toLowerCase() === nomeUsuario.toLowerCase());
-        }
-
-        form.addEventListener("submit", event => {
-            event.preventDefault();
-            let valido = true;
-            mensagem.className = "mensagem";
-            mensagem.textContent = "";
-
-            if (nome.value.trim().length < 5) {
-                mostrarErro(nome, "erro-nome", "Digite seu nome completo.");
-                valido = false;
-            } else {
-                limparErro(nome, "erro-nome");
-            }
-
-            if (!validarCPF(cpf.value)) {
-                mostrarErro(cpf, "erro-cpf", "Digite um CPF válido.");
-                valido = false;
-            } else {
-                limparErro(cpf, "erro-cpf");
-            }
-
-            const telefoneNumeros = somenteNumeros(telefone.value);
-
-            if (telefoneNumeros.length < 10) {
-                mostrarErro(telefone, "erro-telefone", "Digite um telefone válido.");
-                valido = false;
-            } else {
-                limparErro(telefone, "erro-telefone");
-            }
-
-            if (!email.checkValidity()) {
-                mostrarErro(email, "erro-email", "Digite um e-mail válido.");
-                valido = false;
-            } else {
-                limparErro(email, "erro-email");
-            }
-
-            if (!especialidade.value) {
-                mostrarErro(especialidade, "erro-especialidade", "Selecione sua especialidade.");
-                valido = false;
-            } else {
-                limparErro(especialidade, "erro-especialidade");
-            }
-
-            if (!experiencia.value) {
-                mostrarErro(experiencia, "erro-experiencia", "Selecione seu tempo de experiência.");
-                valido = false;
-            } else {
-                limparErro(experiencia, "erro-experiencia");
-            }
-
-            const servicosSelecionados = document.querySelectorAll('input[name="servicos"]:checked');
-
-            if (servicosSelecionados.length === 0) {
-                document.getElementById("erro-servicos").textContent = "Selecione pelo menos um serviço.";
-                valido = false;
-            } else {
-                document.getElementById("erro-servicos").textContent = "";
-            }
-
-            const regexUsuario = /^[a-z0-9._-]{4,30}$/;
-
-            if (!regexUsuario.test(usuario.value)) {
-                mostrarErro(usuario, "erro-usuario", "O usuário deve ter de 4 a 30 caracteres e usar apenas letras, números, ponto, hífen ou underline.");
-                valido = false;
-            } else if (usuarioJaExiste(usuario.value)) {
-                mostrarErro(usuario, "erro-usuario", "Este nome de usuário já está cadastrado.");
-                valido = false;
-            } else {
-                limparErro(usuario, "erro-usuario");
-            }
-
-            const senhaValida = senha.value.length >= 8 && /[A-Z]/.test(senha.value) && /[a-z]/.test(senha.value) && /[0-9]/.test(senha.value);
-
-            if (!senhaValida) {
-                mostrarErro(senha, "erro-senha", "A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula e um número.");
-                valido = false;
-            } else {
-                limparErro(senha, "erro-senha");
-            }
-
-            if (confirmarSenha.value !== senha.value || !confirmarSenha.value) {
-                mostrarErro(confirmarSenha, "erro-confirmarSenha", "As senhas não são iguais.");
-                valido = false;
-            } else {
-                limparErro(confirmarSenha, "erro-confirmarSenha");
-            }
-
-            if (!termos.checked) {
-                document.getElementById("erro-termos").textContent = "Você precisa aceitar os termos.";
-                valido = false;
-            } else {
-                document.getElementById("erro-termos").textContent = "";
-            }
-
-            if (!valido) {
-                mensagem.className = "mensagem erro-mensagem";
-                mensagem.textContent = "Corrija os campos destacados antes de continuar.";
-                const primeiroErro = document.querySelector(".invalido");
-
-                if (primeiroErro) {
-                    primeiroErro.focus();
-                }
-
-                return;
-            }
-
-            const profissionais = JSON.parse(localStorage.getItem("belezaArteProfissionais")) || [];
-            const novoProfissional = {
-                id: Date.now(),
-                nome: nome.value.trim(),
-                cpf: cpf.value,
-                telefone: telefone.value,
-                email: email.value.trim(),
-                especialidade: especialidade.value,
-                experiencia: experiencia.value,
-                servicos: Array.from(servicosSelecionados).map(checkbox => checkbox.value),
-                usuario: usuario.value,
-                senha: senha.value,
-                criadoEm: new Date().toISOString(),
-                status: "Ativo"
-            };
-
-            profissionais.push(novoProfissional);
-            localStorage.setItem("belezaArteProfissionais", JSON.stringify(profissionais));
-
-            mensagem.className = "mensagem sucesso-mensagem";
-            mensagem.textContent = "✓ Profissional cadastrada com sucesso!";
-
-            localStorage.setItem("belezaArteProfissionalAtual", JSON.stringify(novoProfissional));
-
-            setTimeout(() => {
-                window.location.href = "meus-agendamentos.html";
-            }, 1000);
-        });
+document.addEventListener("DOMContentLoaded", async () => {
+    const form = document.getElementById("formCadastroProfissional");
+    const fields = {
+        name: document.getElementById("nome"),
+        cpf: document.getElementById("cpf"),
+        phone: document.getElementById("telefone"),
+        email: document.getElementById("email"),
+        specialty: document.getElementById("especialidade"),
+        experience: document.getElementById("experiencia"),
+        username: document.getElementById("usuario"),
+        password: document.getElementById("senha"),
+        confirmation: document.getElementById("confirmarSenha"),
+        terms: document.getElementById("termos")
+    };
+    const message = document.getElementById("mensagemCadastro");
+    const editId = new URLSearchParams(window.location.search).get("id");
+    const isAdminForm = Boolean(document.querySelector(".admin-submit"));
+    let editingProfessional = null;
+
+    function onlyNumbers(value) { return value.replace(/\D/g, ""); }
+    function showMessage(text, type) {
+        message.className = `mensagem ${type}-mensagem`;
+        message.textContent = text;
     }
-);
+    function error(field, id, text) {
+        field.classList.add("invalido");
+        document.getElementById(id).textContent = text;
+    }
+    function clearError(field, id) {
+        field.classList.remove("invalido");
+        document.getElementById(id).textContent = "";
+    }
+    function experienceYears(value) {
+        const match = String(value).match(/\d+/);
+        if (String(value).toLowerCase().includes("menos")) return 0;
+        if (String(value).toLowerCase().includes("mais")) return 11;
+        return match ? Number(match[0]) : Number(value) || 0;
+    }
+    function experienceLabel(value) {
+        const years = Number(value);
+        if (years < 1) return "Menos de 1 ano";
+        if (years <= 3) return "1 a 3 anos";
+        if (years <= 7) return "4 a 7 anos";
+        if (years <= 10) return "8 a 10 anos";
+        return "Mais de 10 anos";
+    }
+    function payload() {
+        const value = {
+            ...(editingProfessional || {}),
+            name: fields.name.value.trim(),
+            specialty: fields.specialty.value,
+            phone: fields.phone.value.trim(),
+            email: fields.email.value.trim(),
+            cpf: fields.cpf.value.trim(),
+            experienceYears: experienceYears(fields.experience.value),
+            username: fields.username.value.trim(),
+            active: editingProfessional?.active ?? true
+        };
+        if (fields.password.value) value.password = fields.password.value;
+        return value;
+    }
+    function validate() {
+        let valid = true;
+        if (fields.name.value.trim().length < 5) { error(fields.name, "erro-nome", "Digite seu nome completo."); valid = false; } else clearError(fields.name, "erro-nome");
+        if (onlyNumbers(fields.cpf.value).length !== 11) { error(fields.cpf, "erro-cpf", "Digite um CPF válido."); valid = false; } else clearError(fields.cpf, "erro-cpf");
+        if (onlyNumbers(fields.phone.value).length < 10) { error(fields.phone, "erro-telefone", "Digite um telefone válido."); valid = false; } else clearError(fields.phone, "erro-telefone");
+        if (!fields.email.checkValidity()) { error(fields.email, "erro-email", "Digite um e-mail válido."); valid = false; } else clearError(fields.email, "erro-email");
+        if (!fields.specialty.value) { error(fields.specialty, "erro-especialidade", "Selecione sua especialidade."); valid = false; } else clearError(fields.specialty, "erro-especialidade");
+        if (!fields.experience.value) { error(fields.experience, "erro-experiencia", "Selecione seu tempo de experiência."); valid = false; } else clearError(fields.experience, "erro-experiencia");
+        if (!/^[a-z0-9._-]{4,30}$/.test(fields.username.value)) { error(fields.username, "erro-usuario", "O usuário deve ter de 4 a 30 caracteres."); valid = false; } else clearError(fields.username, "erro-usuario");
+        const passwordRequired = !editingProfessional;
+        if ((passwordRequired || fields.password.value) && !(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/.test(fields.password.value))) { error(fields.password, "erro-senha", "A senha deve ter pelo menos 8 caracteres, uma maiúscula, uma minúscula e um número."); valid = false; } else clearError(fields.password, "erro-senha");
+        if (fields.password.value !== fields.confirmation.value) { error(fields.confirmation, "erro-confirmarSenha", "As senhas não são iguais."); valid = false; } else clearError(fields.confirmation, "erro-confirmarSenha");
+        if (!editingProfessional && !fields.terms.checked) { document.getElementById("erro-termos").textContent = "Você precisa aceitar os termos."; valid = false; } else document.getElementById("erro-termos").textContent = "";
+        return valid;
+    }
+    function fill(professional) {
+        fields.name.value = professional.name || "";
+        fields.cpf.value = professional.cpf || "";
+        fields.phone.value = professional.phone || "";
+        fields.email.value = professional.email || "";
+        fields.specialty.value = professional.specialty || "";
+        fields.experience.value = experienceLabel(professional.experienceYears);
+        fields.username.value = professional.username || "";
+        if (isAdminForm) {
+            document.querySelector("h1").textContent = "Editar profissional";
+            document.querySelector(".page-heading p:not(.eyebrow)").textContent = "Atualize os dados da profissional.";
+            document.querySelector(".admin-form-heading h2").textContent = "Editar cadastro";
+            document.querySelector(".admin-submit").firstChild.textContent = "SALVAR ALTERAÇÕES ";
+        }
+    }
+    if (editId) {
+        try {
+            const professionals = await professionalApi.list();
+            editingProfessional = professionals.find(item => String(item.id) === editId);
+            if (!editingProfessional) throw new Error("Profissional não encontrada.");
+            fill(editingProfessional);
+        } catch (loadError) {
+            showMessage(loadError.message, "erro");
+            form.querySelector("button[type=submit]").disabled = true;
+        }
+    }
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!validate()) { showMessage("Corrija os campos destacados antes de continuar.", "erro"); return; }
+        const submit = form.querySelector("button[type=submit]");
+        submit.disabled = true;
+        try {
+            const saved = editId ? await professionalApi.update(payload()) : await professionalApi.create(payload());
+            const safe = professionalApi.withoutPassword(saved?.data || saved);
+            if (safe?.id) localStorage.setItem("belezaArteProfissionalAtual", JSON.stringify(safe));
+            showMessage(editId ? "Profissional atualizada com sucesso." : "Profissional cadastrada com sucesso.", "sucesso");
+            setTimeout(() => { window.location.href = isAdminForm ? "profissionais-admin.html" : "meus-agendamentos.html"; }, 800);
+        } catch (saveError) {
+            showMessage(saveError.message || "Não foi possível salvar a profissional.", "erro");
+        } finally {
+            submit.disabled = false;
+        }
+    });
+});

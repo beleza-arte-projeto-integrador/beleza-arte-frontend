@@ -31,15 +31,17 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const inicial = profissionalAtual.nome ? profissionalAtual.nome.trim().charAt(0).toUpperCase() : "?";
+    const nomeProfissional = profissionalAtual.name || profissionalAtual.nome || "Profissional";
+    const especialidadeProfissional = profissionalAtual.specialty || profissionalAtual.especialidade || "Profissional";
+    const inicial = nomeProfissional.trim().charAt(0).toUpperCase();
 
     if (dadosProfissional) {
         dadosProfissional.innerHTML = `
             <div class="perfil-profissional">
                 <div class="icone-perfil"> ${escaparHTML(inicial)}</div>
                 <div>
-                    <strong>${escaparHTML(profissionalAtual.nome || "Profissional")}</strong>
-                    <span> ${escaparHTML(profissionalAtual.especialidade || "Profissional")}</span>
+                    <strong>${escaparHTML(nomeProfissional)}</strong>
+                    <span> ${escaparHTML(especialidadeProfissional)}</span>
                 </div>
             </div>
         `;
@@ -129,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 <div class="detalhe-agendamento">
                                     <small> PROFISSIONAL </small>
-                                    <strong> ${escaparHTML(servico.profissional || profissionalAtual.nome || "—")}</strong>
+                                    <strong> ${escaparHTML(servico.profissional || nomeProfissional || "—")}</strong>
                                 </div>
                             </div>
 
@@ -284,25 +286,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (botaoExcluirProfissional) {
-        botaoExcluirProfissional.addEventListener("click", () => {
+        botaoExcluirProfissional.addEventListener("click", async () => {
             const confirmar = confirm("Tem certeza que deseja excluir seu cadastro?\n\n" + "Essa ação removerá sua profissional da plataforma.");
 
             if (!confirmar) {
                 return;
             }
 
-            let profissionais = [];
-
             try {
-                profissionais = JSON.parse(localStorage.getItem("belezaArteProfissionais")) || [];
+                await professionalApi.remove(profissionalAtual.id);
             } catch (erro) {
-                profissionais = [];
+                alert(erro.message || "Não foi possível excluir seu cadastro.");
+                return;
             }
-
-            profissionais = profissionais.filter(profissional =>
-                String(profissional.id) !== String(profissionalAtual.id));
-
-            localStorage.setItem("belezaArteProfissionais", JSON.stringify(profissionais));
             localStorage.removeItem("belezaArteProfissionalAtual");
             alert("Profissional excluída com sucesso!");
             window.location.href = "index.html";
