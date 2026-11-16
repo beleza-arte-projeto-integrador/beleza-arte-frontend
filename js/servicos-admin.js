@@ -73,13 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     function setLoading(active) { loading.hidden = !active; document.querySelectorAll(".service-actions button, #novo-servico, #clear-filter").forEach(button => { button.disabled = active; }); }
-    function asArray(data) {
-        if (Array.isArray(data)) return data;
-        if (Array.isArray(data?.content)) return data.content;
-        if (Array.isArray(data?.data)) return data.data;
-        if (data && typeof data === "object" && ("id" in data || "name" in data)) return [data];
-        return [];
-    }
     function formatPrice(value) { return Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
     function formatDate(value) {
         if (!value) return "—";
@@ -107,19 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const query = queryInput.value.trim();
             const filter = filterInput.value;
-            if (!query) {
-                services = [];
-                render();
-                showMessage("Selecione um campo e informe um valor para pesquisar serviços.", "info");
-                return;
-            }
-            if (filter === "all") {
-                services = [];
-                render();
-                showMessage("Selecione um campo específico para realizar a busca.", "info");
-                return;
-            }
-            services = asArray(await serviceApi.search(filter, query));
+            services = !query || filter === "all"
+                ? await serviceApi.list()
+                : await serviceApi.search(filter, query);
             render();
             if (query && !services.length) showMessage("Nenhum serviço encontrado para essa busca.", "info");
         } catch (error) {
@@ -148,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function closeForm() { formCard.hidden = true; }
     function validate() {
         let valid = true;
-        const required = ["name", "description", "price", "duration_minutes", "created", "category"];
+        const required = ["name", "price", "duration_minutes", "category"];
         required.forEach(key => {
             const field = fields[key];
             const invalid = !String(field.value).trim() || (key === "price" && Number(field.value) < 0) || (key === "duration_minutes" && (!Number.isInteger(Number(field.value)) || Number(field.value) <= 0));
@@ -160,8 +143,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return valid;
     }
     function payload() {
-        const value = { name: fields.name.value.trim(), description: fields.description.value.trim(), price: Number(fields.price.value), duration_minutes: Number(fields.duration_minutes.value), created: new Date(fields.created.value).toISOString(), category: fields.category.value.trim() };
-        if (fields.id.value) value.id = Number(fields.id.value);
+        const value = { name: fields.name.value.trim(), description: fields.description.value.trim(), price: Number(fields.price.value), duration_minutes: Number(fields.duration_minutes.value), category: fields.category.value.trim() };
+        if (fields.id.value) {
+            value.id = Number(fields.id.value);
+            value.created = new Date(fields.created.value).toISOString();
+        }
         return value;
     }
     form.addEventListener("submit", async event => {

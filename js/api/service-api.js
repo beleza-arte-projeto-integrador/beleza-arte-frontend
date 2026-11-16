@@ -1,5 +1,27 @@
 (function () {
     const API_URL = "/api/service";
+    /**
+     * @typedef {Object} Service
+     * @property {number} [id]
+     * @property {string} name
+     * @property {string} description
+     * @property {number} price
+     * @property {number} duration_minutes
+     * @property {string} [created]
+     * @property {string} category
+     */
+
+    /**
+     * @typedef {Object} ServicePayload
+     * @property {number} [id]
+     * @property {string} name
+     * @property {string} description
+     * @property {number} price
+     * @property {number} duration_minutes
+     * @property {string} [created]
+     * @property {string} category
+     */
+
     const searchEndpoints = {
         name: ["searchName", "name"],
         description: ["searchDescription", "description"],
@@ -9,7 +31,7 @@
         created: ["searchCreated", "searchCreation"]
     };
 
-    async function request(path, options = {}) {
+    async function request(path, options = {}, expectedStatus = null) {
         const url = `${API_URL}${path}`;
         const requestOptions = {
             ...options,
@@ -34,23 +56,30 @@
             } catch {}
         }
 
-        if (!response.ok) {
+        if (!response.ok || (expectedStatus !== null && response.status !== expectedStatus)) {
             const detail = data?.message || data?.error || `Não foi possível concluir a operação (HTTP ${response.status}).`;
             const friendlyMessage = response.status === 404
                 ? "Serviço não encontrado."
                 : response.status >= 500
                     ? "O servidor encontrou um erro. Tente novamente mais tarde."
                     : detail;
-            throw new Error(friendlyMessage);
+            const error = new Error(friendlyMessage);
+            error.status = response.status;
+            throw error;
         }
 
         return data;
     }
 
+    /** @returns {Promise<Service[]>} */
     function list() {
-        return request("");
+        return request("").then(normalizeList).catch(error => {
+            if (error.status === 404) return [];
+            throw error;
+        });
     }
 
+    /** @param {keyof typeof searchEndpoints} type @param {string|number} value */
     function search(type, value) {
         const endpoint = searchEndpoints[type];
 
@@ -58,27 +87,43 @@
             throw new Error("Tipo de busca de serviço inválido.");
         }
 
-        return request(`/${endpoint[0]}?${endpoint[1]}=${encodeURIComponent(value)}`);
+        return request(`/${endpoint[0]}?${endpoint[1]}=${encodeURIComponent(value)}`)
+            .then(normalizeList)
+            .catch(error => {
+                if (error.status === 404) return [];
+                throw error;
+            });
     }
 
+    /** @param {ServicePayload} payload @returns {Promise<Service|null>} */
     function create(payload) {
         return request("/createServices", {
-            method: "PUT",
-            body: JSON.stringify(payload)
-        });
-    }
-
-    function update(payload) {
-        return request("/updateServices", {
             method: "POST",
             body: JSON.stringify(payload)
-        });
+        }, 201);
     }
 
+    /** @param {Service} payload @returns {Promise<Service|null>} */
+    function update(payload) {
+        return request("/updateServices", {
+            method: "PUT",
+            body: JSON.stringify(payload)
+        }, 200);
+    }
+
+    /** @param {number} id @returns {Promise<null>} */
     function remove(id) {
         return request(`/deleteServices?id=${encodeURIComponent(id)}`, {
             method: "DELETE"
-        });
+        }, 204);
+    }
+
+    function normalizeList(data) {
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data?.content)) return data.content;
+        if (Array.isArray(data?.data)) return data.data;
+        if (data && typeof data === "object" && ("id" in data || "name" in data)) return [data];
+        return [];
     }
 
     window.serviceApi = { list, search, create, update, remove };

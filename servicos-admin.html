@@ -53,10 +53,10 @@
                     <div class="service-form-grid">
                         <label class="admin-field">Nome<input id="service-name" type="text" required maxlength="120"><small class="erro" data-error-for="name"></small></label>
                         <label class="admin-field">Categoria<input id="service-category" type="text" required maxlength="80"><small class="erro" data-error-for="category"></small></label>
-                        <label class="admin-field field-full">Descrição<textarea id="service-description" required maxlength="500" rows="3"></textarea><small class="erro" data-error-for="description"></small></label>
+                        <label class="admin-field field-full">Descrição<textarea id="service-description" maxlength="500" rows="3"></textarea><small class="erro" data-error-for="description"></small></label>
                         <label class="admin-field">Preço (R$)<input id="service-price" type="number" min="0" step="0.01" required><small class="erro" data-error-for="price"></small></label>
                         <label class="admin-field">Duração (minutos)<input id="service-duration" type="number" min="1" step="1" required><small class="erro" data-error-for="duration_minutes"></small></label>
-                        <label class="admin-field">Data de criação<input id="service-created" type="datetime-local" required><small class="erro" data-error-for="created"></small></label>
+                        <label class="admin-field">Data de criação<input id="service-created" type="datetime-local" readonly><small class="erro" data-error-for="created"></small></label>
                     </div>
                     <div class="service-form-actions"><button class="outline-button" id="cancel-service-bottom" type="button">CANCELAR</button><button class="gold-button" id="save-service" type="submit">SALVAR SERVIÇO <span>→</span></button></div>
                 </form>

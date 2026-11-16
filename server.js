@@ -4,7 +4,7 @@ const path = require("path");
 
 const FRONTEND_ROOT = __dirname;
 const PROXY_PREFIX = "/api";
-const BACKEND_URL = "http://localhost:8081/v1/api/salao";
+const BACKEND_URL = process.env.API_BASE_URL || "http://localhost:8081/v1/api/salao";
 const PORT = Number(process.env.PORT) || 3000;
 
 const MIME_TYPES = {
