@@ -10,6 +10,8 @@ O frontend se comunica com o backend usando a URL base:
 http://localhost:8081/v1/api/salao
 ```
 
+Essa URL é configurável pela variável de ambiente `API_BASE_URL` usada pelo proxy local.
+
 Como o navegador bloqueia requisições entre portas diferentes por CORS, o projeto possui um proxy local. Ele serve o frontend em `http://localhost:3000` e encaminha qualquer rota `/api/...` para a rota equivalente do backend.
 
 Exemplos:
@@ -25,6 +27,8 @@ Exemplos:
 ```
 
 A camada de comunicação fica em [js/api/](./js/api/). Cada módulo deve manter nessa pasta suas requisições, endpoints, payloads, headers e tratamento de respostas, evitando chamadas duplicadas nas telas.
+
+O módulo de itens de agendamento está disponível em [js/api/appointments-items-api.js](./js/api/appointments-items-api.js), com tela de gerenciamento em [itens-agendamento-admin.html](./itens-agendamento-admin.html).
 
 ## Pré-requisitos
 

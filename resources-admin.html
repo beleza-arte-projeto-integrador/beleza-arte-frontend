@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursos | Beleza & Arte</title>
+    <link rel="stylesheet" href="css/painel-admin.css">
+    <link rel="stylesheet" href="css/servicos-admin.css">
+    <link rel="stylesheet" href="css/resources-admin.css">
+</head>
+<body>
+    <header class="admin-header">
+        <a class="brand" href="painel-admin.html"><img src="images/logo.png" alt="Beleza & Arte"><span><strong>BELEZA & ARTE</strong><small>PAINEL DE GESTÃO</small></span></a>
+        <div class="header-user"><span class="avatar">A</span><span><strong>Administrador</strong><small>Gestão do salão</small></span><a href="index.html">Sair</a></div>
+    </header>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <p class="menu-label">MENU PRINCIPAL</p>
+            <a href="painel-admin.html"><span>▦</span> Visão geral</a>
+            <a href="profissionais-admin.html"><span>♙</span> Profissionais</a>
+            <a href="servicos-admin.html"><span>✦</span> Serviços</a>
+            <a class="active" href="resources-admin.html"><span>▣</span> Recursos</a>
+            <a href="itens-agendamento-admin.html"><span>◷</span> Itens de agendamento</a>
+            <a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a>
+            <a href="pagamentos-admin.html"><span>R$</span> Pagamentos</a>
+            <a href="relatorios-admin.html"><span>▥</span> Relatórios</a>
+            <p class="menu-label">ATALHOS</p>
+            <a href="cadastro-profissional-admin.html"><span>＋</span> Cadastrar profissional</a>
+            <a href="index.html"><span>←</span> Voltar ao site</a>
+        </aside>
+        <main class="admin-main">
+            <div class="page-heading"><div><p class="eyebrow">ESTRUTURA DO SALÃO</p><h1>Recursos</h1><p>Cadastre e gerencie os recursos utilizados nos atendimentos.</p></div><button class="gold-button" id="new-resource" type="button">NOVO RECURSO <span>＋</span></button></div>
+            <section class="resource-toolbar" aria-label="Busca e filtros">
+                <form id="resource-search-form" class="resource-search-form">
+                    <select id="resource-filter-type" aria-label="Tipo de filtro">
+                        <option value="name">Nome</option>
+                        <option value="type">Tipo</option>
+                        <option value="active">Status</option>
+                    </select>
+                    <label class="search-box">⌕<input id="resource-filter-value" type="search" placeholder="Informe o nome" aria-label="Valor do filtro"></label>
+                    <select id="resource-active-value" aria-label="Status" hidden>
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                    </select>
+                    <button class="outline-button" type="submit">BUSCAR</button>
+                </form>
+            </section>
+            <section class="resource-form-card panel-card" id="resource-form-card" hidden>
+                <div class="panel-heading"><div><h2 id="resource-form-title">Novo recurso</h2><p>Preencha todos os campos obrigatórios.</p></div><button class="close-button" id="cancel-resource" type="button" aria-label="Fechar formulário">×</button></div>
+                <form id="resource-form" novalidate>
+                    <input id="resource-id" type="hidden">
+                    <div class="resource-form-grid">
+                        <label class="admin-field">Nome<input id="resource-name" type="text" required maxlength="120"><small class="erro" data-error-for="name"></small></label>
+                        <label class="admin-field">Tipo<input id="resource-type" type="text" required maxlength="80"><small class="erro" data-error-for="type"></small></label>
+                        <label class="admin-field">Status<select id="resource-active" required><option value="">Selecione</option><option value="true">Ativo</option><option value="false">Inativo</option></select><small class="erro" data-error-for="active"></small></label>
+                    </div>
+                    <div class="resource-form-actions"><button class="outline-button" id="cancel-resource-bottom" type="button">CANCELAR</button><button class="gold-button" id="save-resource" type="submit">SALVAR RECURSO <span>→</span></button></div>
+                </form>
+            </section>
+            <section class="panel-card table-card resource-list-card">
+                <div class="panel-heading"><div><h2>Recursos cadastrados</h2><p id="resource-count">Informe um filtro para buscar recursos.</p></div><span class="loading-indicator" id="resource-loading" hidden>Carregando...</span></div>
+                <div class="resource-table resource-table-head"><span>Nome</span><span>Tipo</span><span>Status</span><span>Ações</span></div>
+                <div id="resource-list"></div>
+            </section>
+        </main>
+    </div>
+    <div id="resource-delete-modal" class="delete-modal" hidden role="dialog" aria-modal="true" aria-labelledby="resource-delete-title">
+        <div class="delete-modal-backdrop" data-close-resource-delete></div>
+        <div class="delete-modal-card"><button class="delete-modal-close" type="button" data-close-resource-delete aria-label="Fechar confirmação">×</button><span class="delete-modal-icon">!</span><h2 id="resource-delete-title">Excluir recurso?</h2><p>Essa ação não poderá ser desfeita.</p><strong id="resource-delete-name"></strong><div class="delete-modal-actions"><button class="outline-button" type="button" data-close-resource-delete>Cancelar</button><button class="delete-confirm-button" id="confirm-delete-resource" type="button">Excluir recurso</button></div></div>
+    </div>
+    <div id="resource-notifications" class="service-notifications" role="status" aria-live="polite" aria-atomic="true"></div>
+    <script src="js/api/resource-api.js"></script>
+    <script src="js/resources-admin.js"></script>
+</body>
+</html>

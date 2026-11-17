@@ -115,7 +115,12 @@
     function remove(id) {
         return request(`/deleteServices?id=${encodeURIComponent(id)}`, {
             method: "DELETE"
-        }, 204);
+        }, 204).catch(error => {
+            if (error.status === 409 || error.status === 422 || error.status >= 500) {
+                throw new Error("Não é possível excluir este serviço porque ele está vinculado a um agendamento.");
+            }
+            throw error;
+        });
     }
 
     function normalizeList(data) {

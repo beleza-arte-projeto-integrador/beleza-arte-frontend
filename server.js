@@ -24,20 +24,42 @@ function sendText(response, statusCode, message) {
     response.end(message);
 }
 
+function rewriteLocation(location, backendUrl) {
+    if (!location) return location;
+
+    const targetUrl = new URL(location, backendUrl);
+    const backendPath = backendUrl.pathname.replace(/\/+$/, "");
+
+    const isBackendPath = targetUrl.pathname === backendPath
+        || targetUrl.pathname.startsWith(`${backendPath}/`);
+    if (targetUrl.origin !== backendUrl.origin || !isBackendPath) {
+        return location;
+    }
+
+    const suffix = targetUrl.pathname.slice(backendPath.length);
+    return `${PROXY_PREFIX}${suffix || "/"}${targetUrl.search}${targetUrl.hash}`;
+}
+
 function proxyToBackend(request, response) {
     const backendUrl = new URL(BACKEND_URL);
     const suffix = request.url.slice(PROXY_PREFIX.length);
     const proxyRequest = http.request({
         hostname: backendUrl.hostname,
         port: backendUrl.port,
-        path: `${backendUrl.pathname}${suffix}`,
+        path: `${backendUrl.pathname.replace(/\/+$/, "")}${suffix || "/"}`,
         method: request.method,
         headers: {
             ...request.headers,
             host: backendUrl.host
         }
     }, proxyResponse => {
-        response.writeHead(proxyResponse.statusCode, proxyResponse.headers);
+        const headers = { ...proxyResponse.headers };
+        if (headers.location) {
+            headers.location = Array.isArray(headers.location)
+                ? headers.location.map(location => rewriteLocation(location, backendUrl))
+                : rewriteLocation(headers.location, backendUrl);
+        }
+        response.writeHead(proxyResponse.statusCode, headers);
         proxyResponse.pipe(response);
     });
 

@@ -99,6 +99,11 @@
     function remove(id) {
         return request(`/deleteProfessionals?id=${encodeURIComponent(id)}`, {
             method: "DELETE"
+        }).catch(error => {
+            if (error.status === 409 || error.status === 422 || error.status >= 500) {
+                throw new Error("Não é possível excluir esta profissional porque ela está vinculada a um agendamento.");
+            }
+            throw error;
         });
     }
 

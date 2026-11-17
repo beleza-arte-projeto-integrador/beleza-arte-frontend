@@ -39,6 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (knownMessage.includes("conectar ao servidor")) return "Não foi possível conectar ao servidor. Tente novamente em alguns instantes.";
         if (knownMessage.includes("servidor encontrou")) return "O servidor está indisponível no momento. Tente novamente em alguns instantes.";
         if (knownMessage.includes("não encontrado")) return "O serviço não foi encontrado.";
+        if (knownMessage.includes("Já existe")) return knownMessage;
+        if (knownMessage.includes("vinculado a um agendamento")) return knownMessage;
         return fallback;
     }
     function removeNotification(notification) {
@@ -143,11 +145,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return valid;
     }
     function payload() {
-        const value = { name: fields.name.value.trim(), description: fields.description.value.trim(), price: Number(fields.price.value), duration_minutes: Number(fields.duration_minutes.value), category: fields.category.value.trim() };
-        if (fields.id.value) {
-            value.id = Number(fields.id.value);
-            value.created = new Date(fields.created.value).toISOString();
-        }
+        const value = {
+            name: fields.name.value.trim(),
+            description: fields.description.value.trim(),
+            price: Number(fields.price.value),
+            duration_minutes: Number(fields.duration_minutes.value),
+            category: fields.category.value.trim(),
+            created: new Date(fields.created.value).toISOString()
+        };
+        if (fields.id.value) value.id = Number(fields.id.value);
         return value;
     }
     form.addEventListener("submit", async event => {
@@ -156,7 +162,14 @@ document.addEventListener("DOMContentLoaded", () => {
         saveButton.disabled = true;
         try {
             const editing = Boolean(fields.id.value);
-            await (editing ? serviceApi.update(payload()) : serviceApi.create(payload()));
+            const servicePayload = payload();
+            const servicesWithSameName = await serviceApi.search("name", servicePayload.name);
+            const duplicate = servicesWithSameName.some(service =>
+                service.name?.trim().toLowerCase() === servicePayload.name.toLowerCase()
+                && String(service.id) !== String(servicePayload.id || "")
+            );
+            if (duplicate) throw new Error("Já existe um serviço com esse nome.");
+            await (editing ? serviceApi.update(servicePayload) : serviceApi.create(servicePayload));
             closeForm();
             showMessage(editing ? "Serviço atualizado com sucesso." : "Serviço cadastrado com sucesso.", "success");
             await loadServices();
