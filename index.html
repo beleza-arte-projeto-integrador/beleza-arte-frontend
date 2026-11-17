@@ -28,7 +28,23 @@
                     <li><a href="#sobre">Sobre</a></li>
                     <li><a href="#portfolio">Portfólio</a></li>
                     <li><a href="#contato">Contato</a></li>
-                    <li><a href="cadastro-profissional.html"class="link-cadastrar-profissional">Cadastrar profissional</a></li>
+                    <li class="area-restrita">
+                        <button class="botao-area-restrita" type="button" aria-expanded="false" aria-controls="opcoes-area-restrita">
+                            ÁREA RESTRITA <span aria-hidden="true">⌄</span>
+                        </button>
+
+                        <div class="opcoes-area-restrita" id="opcoes-area-restrita">
+                            <a href="login-profissional.html">
+                                <strong>Sou profissional</strong>
+                                <small>Entrar ou cadastrar</small>
+                            </a>
+
+                            <a href="login-admin.html">
+                                <strong>Sou administrador</strong>
+                                <small>Acessar o painel</small>
+                            </a>
+                        </div>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -63,6 +79,10 @@
                     <span class="botao-seta">
                         →
                     </span>
+                </a>
+
+                <a href="#opcoes-area-restrita" class="atalho-area-restrita">
+                    Acesso para equipe e administração <span aria-hidden="true">→</span>
                 </a>
 
                 <div class="beneficios">
@@ -322,6 +342,30 @@
             </div>
         </div>
     </section>
+
+    <script>
+        const botaoAreaRestrita = document.querySelector(".botao-area-restrita");
+        const areaRestrita = document.querySelector(".area-restrita");
+
+        botaoAreaRestrita.addEventListener("click", () => {
+            const aberto = areaRestrita.classList.toggle("aberta");
+            botaoAreaRestrita.setAttribute("aria-expanded", String(aberto));
+        });
+
+        document.querySelector(".atalho-area-restrita").addEventListener("click", event => {
+            event.preventDefault();
+            areaRestrita.classList.add("aberta");
+            botaoAreaRestrita.setAttribute("aria-expanded", "true");
+            botaoAreaRestrita.focus();
+        });
+
+        document.addEventListener("click", event => {
+            if (!areaRestrita.contains(event.target)) {
+                areaRestrita.classList.remove("aberta");
+                botaoAreaRestrita.setAttribute("aria-expanded", "false");
+            }
+        });
+    </script>
 
     <footer>
         <div class="conteiner footer-conteudo">

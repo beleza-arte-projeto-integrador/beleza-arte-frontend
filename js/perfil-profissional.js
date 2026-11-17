@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("formPerfilProfissional");
     const nome = document.getElementById("nome");
     const cpf = document.getElementById("cpf");
@@ -19,27 +19,48 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    let profissionais = JSON.parse(localStorage.getItem("belezaArteProfissionais")) || [];
-    const indiceProfissional = profissionais.findIndex(profissional => profissional.id === profissionalAtual.id);
+    let profissional;
+    try {
+        const profissionais = await professionalApi.list();
+        profissional = profissionais.find(item => String(item.id) === String(profissionalAtual.id));
+    } catch (error) {
+        mensagem.className = "mensagem erro-mensagem";
+        mensagem.textContent = error.message || "Não foi possível carregar seu cadastro.";
+        return;
+    }
 
-    if (indiceProfissional === -1) {
+    if (!profissional) {
         alert("Não foi possível localizar seu cadastro.");
         localStorage.removeItem("belezaArteProfissionalAtual");
         window.location.href = "login-profissional.html";
         return;
     }
 
-    const profissional = profissionais[indiceProfissional];
-
-    nome.value = profissional.nome || "";
+    nome.value = profissional.name || "";
     cpf.value = profissional.cpf || "";
-    telefone.value = profissional.telefone || "";
+    telefone.value = profissional.phone || "";
     email.value = profissional.email || "";
-    especialidade.value = profissional.especialidade || "";
-    experiencia.value = profissional.experiencia || "";
-    usuario.value = profissional.usuario || "";
+    especialidade.value = profissional.specialty || "";
+    experiencia.value = experienceLabel(profissional.experienceYears);
+    usuario.value = profissional.username || "";
 
-    const servicosSalvos = profissional.servicos || [];
+    function experienceLabel(value) {
+        const years = Number(value);
+        if (years < 1) return "Menos de 1 ano";
+        if (years <= 3) return "1 a 3 anos";
+        if (years <= 7) return "4 a 7 anos";
+        if (years <= 10) return "8 a 10 anos";
+        return "Mais de 10 anos";
+    }
+
+    function experienceYears(value) {
+        const text = String(value).toLowerCase();
+        if (text.includes("menos")) return 0;
+        if (text.includes("mais")) return 11;
+        return Number(text.match(/\d+/)?.[0] || 0);
+    }
+
+    const servicosSalvos = [];
 
     servicos.forEach(servico => {
         servico.checked = servicosSalvos.includes(servico.value);
@@ -120,16 +141,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    function usuarioJaExiste(nomeUsuario) {
-        return profissionais.some(profissional => {
-            if (profissional.id === profissionalAtual.id) {
-                return false;
-            }
-
-            return (profissional.usuario.toLowerCase() === nomeUsuario.toLowerCase());
-        });
-    }
-
     function mostrarErro(campo, idErro, texto) {
         campo.classList.add("invalido");
         campo.classList.remove("valido");
@@ -144,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(idErro).textContent = "";
     }
 
-    form.addEventListener("submit", event => {
+    form.addEventListener("submit", async event => {
         event.preventDefault();
         let valido = true;
 
@@ -211,9 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!regexUsuario.test(usuario.value)) {
             mostrarErro(usuario, "erro-usuario", "O usuário deve ter de 4 a 30 caracteres.");
             valido = false;
-        } else if (usuarioJaExiste(usuario.value)) {
-            mostrarErro(usuario, "erro-usuario", "Este nome de usuário já está sendo usado.");
-            valido = false;
         } else {
             limparErro(usuario, "erro-usuario");
         }
@@ -252,26 +260,28 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const novosServicos = Array.from(servicosSelecionados).map(checkbox => checkbox.value);
-
         const profissionalAtualizada = {
-            ...profissional, nome: nome.value.trim(), cpf: cpf.value, telefone: telefone.value, email: email.value.trim(), especialidade: especialidade.value, experiencia: experiencia.value, servicos: novosServicos, usuario: usuario.value.trim()
+            ...profissional,
+            name: nome.value.trim(),
+            cpf: cpf.value,
+            phone: telefone.value,
+            email: email.value.trim(),
+            specialty: especialidade.value,
+            experienceYears: experienceYears(experiencia.value),
+            username: usuario.value.trim()
         };
+        if (senha.value) profissionalAtualizada.password = senha.value;
 
-        if (senha.value) {
-            profissionalAtualizada.senha = senha.value;
+        try {
+            const resposta = await professionalApi.update(profissionalAtualizada);
+            const segura = professionalApi.withoutPassword(resposta?.data || resposta || profissionalAtualizada);
+            localStorage.setItem("belezaArteProfissionalAtual", JSON.stringify(segura));
+            mensagem.className = "mensagem sucesso-mensagem";
+            mensagem.textContent = "✓ Dados atualizados com sucesso!";
+            setTimeout(() => { window.location.href = "meus-agendamentos.html"; }, 1000);
+        } catch (error) {
+            mensagem.className = "mensagem erro-mensagem";
+            mensagem.textContent = error.message || "Não foi possível atualizar seus dados.";
         }
-
-        profissionais[indiceProfissional] = profissionalAtualizada;
-
-        localStorage.setItem("belezaArteProfissionais", JSON.stringify(profissionais));
-        localStorage.setItem("belezaArteProfissionalAtual", JSON.stringify(profissionalAtualizada));
-
-        mensagem.className = "mensagem sucesso-mensagem";
-        mensagem.textContent = "✓ Dados atualizados com sucesso!";
-
-        setTimeout(() => {
-            window.location.href = "meus-agendamentos.html";
-        }, 1000);
     });
 });

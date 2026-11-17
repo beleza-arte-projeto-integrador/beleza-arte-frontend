@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profissionais | Beleza & Arte</title><link rel="stylesheet" href="css/painel-admin.css">
+    <link rel="stylesheet" href="css/servicos-admin.css">
+</head>
+<body>
+    <header class="admin-header"><a class="brand" href="painel-admin.html"><img src="images/logo.png" alt="Beleza & Arte"><span><strong>BELEZA & ARTE</strong><small>PAINEL DE GESTÃO</small></span></a><div class="header-user"><span class="avatar">A</span><span><strong>Administrador</strong><small>Gestão do salão</small></span><a href="index.html">Sair</a></div></header>
+    <div class="admin-layout"><aside class="admin-sidebar"><p class="menu-label">MENU PRINCIPAL</p><a href="painel-admin.html"><span>▦</span> Visão geral</a><a class="active" href="profissionais-admin.html"><span>♙</span> Profissionais</a><a href="servicos-admin.html"><span>✦</span> Serviços</a><a href="resources-admin.html"><span>▣</span> Recursos</a><a href="itens-agendamento-admin.html"><span>◷</span> Itens de agendamento</a><a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a><a href="pagamentos-admin.html"><span>R$</span> Pagamentos</a><a href="relatorios-admin.html"><span>▥</span> Relatórios</a><p class="menu-label">ATALHOS</p><a href="cadastro-profissional-admin.html"><span>＋</span> Cadastrar profissional</a><a href="agendamento.html"><span>＋</span> Novo agendamento</a><a href="index.html"><span>←</span> Voltar ao site</a></aside>
+        <main class="admin-main"><div class="page-heading"><div><p class="eyebrow">EQUIPE DO SALÃO</p><h1>Profissionais</h1><p>Cadastre e gerencie os profissionais da Beleza & Arte.</p></div></div>
+            <section class="toolbar"><label class="search-box">⌕<input id="professional-search" type="search" placeholder="Buscar profissional"></label><select id="specialty-filter"><option value="">Todas as especialidades</option><option>Cabeleireira</option><option>Manicure</option><option>Esteticista</option><option>Maquiadora</option></select></section>
+            <p id="professional-status" class="professional-status" role="status"></p><section class="professional-grid" id="professional-list"></section>
+            <div class="modal-backdrop" id="professional-modal" hidden>
+                <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="professional-modal-title">
+                    <button class="modal-close" id="close-professional-modal" type="button" aria-label="Fechar">×</button>
+                    <h2 id="professional-modal-title">Editar profissional</h2>
+                    <form id="professional-form">
+                        <label>Nome completo<input id="edit-name" required></label>
+                        <label>Especialidade<select id="edit-specialty" required><option value="">Selecione</option><option>Cabeleireira</option><option>Manicure</option><option>Esteticista</option><option>Maquiadora</option><option>Designer de Sobrancelhas</option></select></label>
+                        <label>Telefone<input id="edit-phone" required></label>
+                        <label>E-mail<input id="edit-email" type="email" required></label>
+                        <label>CPF<input id="edit-cpf" required></label>
+                        <label>Anos de experiência<input id="edit-experience" type="number" min="0" required></label>
+                        <label>Nome de usuário<input id="edit-username" required></label>
+                        <label>Status<select id="edit-active"><option value="true">Ativa</option><option value="false">Inativa</option></select></label>
+                        <p id="professional-form-error" class="professional-form-error" role="alert"></p>
+                        <div class="modal-actions"><button class="secondary-button" id="cancel-professional-modal" type="button">CANCELAR</button><button class="gold-button" type="submit">SALVAR ALTERAÇÕES</button></div>
+                    </form>
+                </section>
+            </div>
+            <div id="delete-professional-modal" class="delete-modal" hidden role="dialog" aria-modal="true" aria-labelledby="delete-professional-modal-title">
+                <div class="delete-modal-backdrop" data-close-professional-delete></div>
+                <div class="delete-modal-card">
+                    <button class="delete-modal-close" type="button" data-close-professional-delete aria-label="Fechar confirmação">×</button>
+                    <span class="delete-modal-icon">!</span>
+                    <h2 id="delete-professional-modal-title">Excluir profissional?</h2>
+                    <p>Essa ação não poderá ser desfeita.</p>
+                    <strong id="delete-professional-name"></strong>
+                    <div class="delete-modal-actions">
+                        <button class="outline-button" type="button" data-close-professional-delete>Cancelar</button>
+                        <button class="delete-confirm-button" id="confirm-delete-professional" type="button">Excluir profissional</button>
+                    </div>
+                </div>
+            </div>
+            <div id="professional-notifications" class="service-notifications" role="status" aria-live="polite" aria-atomic="true"></div>
+        </main>
+    </div>
+    <script src="js/api/professional-api.js"></script><script src="js/painel-admin.js"></script>
+</body>
+</html>

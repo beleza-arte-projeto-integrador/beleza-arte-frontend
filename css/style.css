@@ -2381,3 +2381,121 @@ footer {
         scroll-behavior: auto !important;
     }
 }
+
+.area-restrita {
+    position: relative;
+}
+
+.botao-area-restrita {
+    border: 1px solid var(--dourado);
+    border-radius: 4px;
+    background: rgba(214, 160, 56, .12);
+    color: var(--branco);
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    padding: 10px 13px;
+    text-transform: uppercase;
+    transition: .3s;
+}
+
+.botao-area-restrita span {
+    color: var(--dourado);
+    margin-left: 5px;
+}
+
+.botao-area-restrita:hover,
+.area-restrita.aberta .botao-area-restrita {
+    background: var(--dourado);
+    color: var(--preto);
+}
+
+.area-restrita.aberta .botao-area-restrita span {
+    color: var(--preto);
+}
+
+.opcoes-area-restrita {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 13px);
+    width: 230px;
+    padding: 8px;
+    background: var(--preto2);
+    border: 1px solid rgba(214, 160, 56, .45);
+    border-radius: 5px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+    z-index: 20;
+}
+
+.area-restrita.aberta .opcoes-area-restrita {
+    display: block;
+}
+
+.opcoes-area-restrita a {
+    display: block;
+    padding: 12px;
+    border-radius: 3px;
+    text-transform: none;
+}
+
+.opcoes-area-restrita a:hover {
+    background: rgba(214, 160, 56, .13);
+}
+
+.opcoes-area-restrita a::after {
+    display: none;
+}
+
+.opcoes-area-restrita strong,
+.opcoes-area-restrita small {
+    display: block;
+}
+
+.opcoes-area-restrita strong {
+    color: var(--branco);
+    font-size: 12px;
+}
+
+.opcoes-area-restrita small {
+    color: var(--cinza4);
+    font-size: 10px;
+    margin-top: 4px;
+}
+
+.atalho-area-restrita {
+    color: var(--dourado-claro);
+    font-size: 12px;
+    letter-spacing: .3px;
+    margin-top: -6px;
+    transition: .3s;
+}
+
+.atalho-area-restrita span {
+    margin-left: 5px;
+}
+
+.atalho-area-restrita:hover {
+    color: var(--branco);
+}
+
+@media (max-width: 600px) {
+    nav li.area-restrita {
+        display: block;
+    }
+
+    .botao-area-restrita {
+        font-size: 9px;
+        padding: 8px 7px;
+    }
+
+    .opcoes-area-restrita {
+        right: 0;
+        top: calc(100% + 8px);
+        width: 205px;
+    }
+
+    .atalho-area-restrita {
+        font-size: 11px;
+    }
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itens de agendamento | Beleza & Arte</title>
+    <link rel="stylesheet" href="css/painel-admin.css">
+    <link rel="stylesheet" href="css/servicos-admin.css">
+    <link rel="stylesheet" href="css/itens-agendamento-admin.css">
+</head>
+<body>
+    <header class="admin-header">
+        <a class="brand" href="painel-admin.html"><img src="images/logo.png" alt="Beleza & Arte"><span><strong>BELEZA & ARTE</strong><small>PAINEL DE GESTÃO</small></span></a>
+        <div class="header-user"><span class="avatar">A</span><span><strong>Administrador</strong><small>Gestão do salão</small></span><a href="index.html">Sair</a></div>
+    </header>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <p class="menu-label">MENU PRINCIPAL</p>
+            <a href="painel-admin.html"><span>▦</span> Visão geral</a>
+            <a href="profissionais-admin.html"><span>♙</span> Profissionais</a>
+            <a href="servicos-admin.html"><span>✦</span> Serviços</a>
+            <a href="resources-admin.html"><span>▣</span> Recursos</a>
+            <a class="active" href="itens-agendamento-admin.html"><span>◷</span> Itens de agendamento</a>
+            <a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a>
+            <a href="pagamentos-admin.html"><span>R$</span> Pagamentos</a>
+            <a href="relatorios-admin.html"><span>▥</span> Relatórios</a>
+            <p class="menu-label">ATALHOS</p>
+            <a href="agendamento.html"><span>＋</span> Novo agendamento</a>
+            <a href="index.html"><span>←</span> Voltar ao site</a>
+        </aside>
+        <main class="admin-main">
+            <div class="page-heading">
+                <div><p class="eyebrow">AGENDA DO SALÃO</p><h1>Itens de agendamento</h1><p>Cadastre e consulte os serviços de cada agendamento.</p></div>
+                <button class="gold-button" id="new-item" type="button">NOVO ITEM <span>＋</span></button>
+            </div>
+
+            <section class="appointments-toolbar">
+                <select id="search-type" aria-label="Tipo de busca">
+                    <option value="start">Data de início</option>
+                    <option value="end">Data de término</option>
+                    <option value="price">Preço</option>
+                </select>
+                <input id="search-value" type="datetime-local" aria-label="Valor da busca">
+                <button class="outline-button" id="search-items" type="button">BUSCAR</button>
+                <button class="outline-button" id="clear-search" type="button">LIMPAR</button>
+            </section>
+
+            <section class="panel-card item-form-card" id="item-form-card" hidden>
+                <div class="panel-heading"><div><h2 id="item-form-title">Novo item</h2><p>Preencha todos os campos obrigatórios.</p></div><button class="close-button" id="cancel-item" type="button" aria-label="Fechar formulário">×</button></div>
+                <form id="item-form" novalidate>
+                    <input id="item-id" type="hidden">
+                    <div class="item-form-grid">
+                        <label class="admin-field">Agendamento<input id="appointment-id" type="number" min="1" step="1" required><small class="erro" data-error-for="appointment_id"></small></label>
+                        <label class="admin-field">Serviço<input id="service-id" type="number" min="1" step="1" required><small class="erro" data-error-for="service_id"></small></label>
+                        <label class="admin-field">Profissional<input id="professional-id" type="number" min="1" step="1" required><small class="erro" data-error-for="professional_id"></small></label>
+                        <label class="admin-field">Recurso<input id="resource-id" type="number" min="1" step="1" required><small class="erro" data-error-for="resource_id"></small></label>
+                        <label class="admin-field">Início<input id="start-at" type="datetime-local" required><small class="erro" data-error-for="start_at"></small></label>
+                        <label class="admin-field">Término<input id="end-at" type="datetime-local" required><small class="erro" data-error-for="end_at"></small></label>
+                        <label class="admin-field">Preço (R$)<input id="item-price" type="number" min="0" step="0.01" required><small class="erro" data-error-for="price"></small></label>
+                    </div>
+                    <div class="item-form-actions"><button class="outline-button" id="cancel-item-bottom" type="button">CANCELAR</button><button class="gold-button" id="save-item" type="submit">SALVAR ITEM <span>→</span></button></div>
+                </form>
+            </section>
+
+            <section class="panel-card table-card">
+                <div class="panel-heading"><div><h2>Itens cadastrados</h2><p id="item-count">Carregando itens...</p></div><span class="loading-indicator" id="item-loading" hidden>Carregando...</span></div>
+                <div class="item-table item-table-head"><span>ID</span><span>AGENDAMENTO</span><span>SERVIÇO</span><span>PROFISSIONAL</span><span>HORÁRIO</span><span>PREÇO</span><span>AÇÕES</span></div>
+                <div id="item-list"></div>
+            </section>
+        </main>
+    </div>
+    <div id="item-delete-modal" class="delete-modal" hidden role="dialog" aria-modal="true" aria-labelledby="item-delete-title">
+        <div class="delete-modal-backdrop" data-close-item-delete></div>
+        <div class="delete-modal-card">
+            <button class="delete-modal-close" type="button" data-close-item-delete aria-label="Fechar confirmação">×</button>
+            <span class="delete-modal-icon">!</span>
+            <h2 id="item-delete-title">Excluir item de agendamento?</h2>
+            <p>Essa ação não poderá ser desfeita.</p>
+            <strong id="item-delete-name"></strong>
+            <div class="delete-modal-actions">
+                <button class="outline-button" type="button" data-close-item-delete>Cancelar</button>
+                <button class="delete-confirm-button" id="confirm-delete-item" type="button">Excluir item</button>
+            </div>
+        </div>
+    </div>
+    <div id="item-notifications" class="item-notifications" role="status" aria-live="polite"></div>
+    <script src="js/api/appointments-items-api.js"></script>
+    <script src="js/appointments-items-admin.js"></script>
+</body>
+</html>
