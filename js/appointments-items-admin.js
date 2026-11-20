@@ -10,8 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteModal = document.getElementById("item-delete-modal");
     const deleteName = document.getElementById("item-delete-name");
     const confirmDelete = document.getElementById("confirm-delete-item");
-    const { brasiliaParts, toBrasiliaIso, formatDateTime } = appointmentApi.time;
+    const { brasiliaParts, toBrasiliaIso, addMinutesLocal, formatDateTime } = appointmentApi.time;
     let items = [];
+    let services = [];
+    let professionals = [];
+    let resources = [];
     let pendingDeletion = null;
     let lastSearch = null;
 
@@ -58,6 +61,66 @@ document.addEventListener("DOMContentLoaded", () => {
         return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
     }
 
+    function findById(collection, id) {
+        return collection.find(value => Number(value.id) === Number(id));
+    }
+
+    const labels = {
+        service_id: id => findById(services, id)?.name || `Serviço #${id}`,
+        professional_id: id => findById(professionals, id)?.name || `Profissional #${id}`,
+        resource_id: id => {
+            const resource = findById(resources, id);
+            return resource ? `${resource.name} (${resource.type || "recurso"})` : `Recurso #${id}`;
+        }
+    };
+
+    // Preenche um select com as opções (id → nome). Mantém o valor atual selecionado, se ainda existir.
+    function fillSelect(select, collection, getLabel, placeholder) {
+        const current = select.value;
+        select.innerHTML = "";
+        select.add(new Option(placeholder, ""));
+        collection.forEach(value => select.add(new Option(getLabel(value), value.id)));
+        if ([...select.options].some(option => option.value === current)) select.value = current;
+    }
+
+    // Garante que o valor de um item salvo apareça no select mesmo fora da lista
+    // (ex.: recurso inativo ou profissional que não veio na busca).
+    function selectValue(select, id, missingLabel) {
+        const value = id === null || id === undefined ? "" : String(id);
+        if (value && ![...select.options].some(option => option.value === value)) {
+            select.add(new Option(missingLabel(value), value));
+        }
+        select.value = value;
+    }
+
+    async function loadLookups() {
+        const results = await Promise.allSettled([
+            serviceApi.list(),
+            professionalApi.list(),
+            resourceApi.search("active", "true")
+        ]);
+        const names = ["serviços", "profissionais", "recursos"];
+        const failures = results
+            .map((result, index) => result.status === "rejected" ? `${names[index]}: ${result.reason?.message || "erro desconhecido"}` : null)
+            .filter(Boolean);
+        const byName = (a, b) => String(a.name || "").localeCompare(String(b.name || ""), "pt-BR");
+        services = results[0].status === "fulfilled" ? [...results[0].value].sort(byName) : [];
+        professionals = results[1].status === "fulfilled" ? [...results[1].value].filter(value => value.active !== false).sort(byName) : [];
+        resources = results[2].status === "fulfilled" ? results[2].value.filter(value => value.active !== false).sort(byName) : [];
+        fillSelect(fields.service_id, services, service => service.name, services.length ? "Selecione um serviço" : "Nenhum serviço cadastrado");
+        fillSelect(fields.professional_id, professionals, professional => professional.name, professionals.length ? "Selecione um profissional" : "Nenhum profissional cadastrado");
+        fillSelect(fields.resource_id, resources, resource => `${resource.name} (${resource.type || "recurso"})`,resources.length ? "Selecione um recurso" : "Nenhum recurso ativo");
+        if (failures.length) showMessage(`Não foi possível carregar ${failures.join("; ")}.`, "error");
+        if (items.length) render();
+    }
+
+    // Ao escolher o serviço (ou mudar o início): sugere preço e término pela duração.
+    function updateEndFromDuration() {
+        const service = findById(services, fields.service_id.value);
+        const duration = Number(service?.duration_minutes);
+        if (fields.start_at.value && duration > 0) fields.end_at.value = addMinutesLocal(fields.start_at.value, duration);
+    }
+
     function render(emptyText = "Cadastre um item ou altere os filtros de busca.") {
         count.textContent = `${items.length} item${items.length === 1 ? "" : "s"} encontrado${items.length === 1 ? "" : "s"}`;
         if (!items.length) {
@@ -67,8 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
         list.innerHTML = items.map(item => `<div class="item-table item-row">
             <span>${escapeHtml(item.id)}</span>
             <span>${escapeHtml(item.appointment_id)}</span>
-            <span>${escapeHtml(item.service_id)}<small>Recurso ${escapeHtml(item.resource_id ?? "—")}</small></span>
-            <span>${escapeHtml(item.professional_id)}</span>
+            <span>${escapeHtml(labels.service_id(item.service_id))}<small>${item.resource_id ? escapeHtml(labels.resource_id(item.resource_id)) : "Sem recurso"}</small></span>
+            <span>${escapeHtml(labels.professional_id(item.professional_id))}</span>
             <span>${escapeHtml(formatDateTime(item.start_at))}<small>até ${escapeHtml(formatDateTime(item.end_at))}</small></span>
             <strong>${escapeHtml(formatPrice(item.price))}</strong>
             <div class="item-actions"><button type="button" data-action="edit" data-id="${escapeHtml(item.id)}">EDITAR</button><button type="button" class="delete-item" data-action="delete" data-id="${escapeHtml(item.id)}">EXCLUIR</button></div>
@@ -79,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function loadItems(loader = lastSearch) {
         if (!loader) {
             items = [];
-            render("Busque pelo ID do agendamento, pela data de início/término exata ou pelo preço.");
+            render("Busque pela data de início/término exata ou pelo preço.");
             count.textContent = "Faça uma busca para ver os itens.";
             return;
         }
@@ -99,27 +162,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Os itens de um agendamento vêm em appointment.items. Não há busca de agendamento por id,
-    // então ele é localizado entre os agendamentos de todos os status.
-    async function itemsOfAppointment(appointmentId) {
-        const appointments = await appointmentApi.listAllAppointments();
-        const appointment = appointments.find(value => Number(value.id) === Number(appointmentId));
-        if (!appointment) throw new Error(`Agendamento #${appointmentId} não encontrado.`);
-        return [...(appointment.items || [])];
-    }
-
     function openForm(item) {
         form.reset();
         document.querySelectorAll("[data-error-for]").forEach(error => error.textContent = "");
         fields.id.value = item?.id || "";
         Object.keys(fields).filter(key => key !== "id").forEach(key => {
+            if (labels[key]) {
+                selectValue(fields[key], item?.[key], labels[key]);
+                return;
+            }
             fields[key].value = item
                 ? (key === "start_at" || key === "end_at" ? localDateTimeValue(item[key]) : item[key] ?? "")
                 : "";
         });
-        if (!item && searchType.value === "appointment" && Number(searchValue.value) > 0) {
-            fields.appointment_id.value = searchValue.value;
-        }
+        // Com o profissional definido, mostra só os serviços dele (mantendo o serviço salvo do item).
         document.getElementById("item-form-title").textContent = item ? "Editar item" : "Novo item";
         formCard.hidden = false;
         fields.appointment_id.focus();
@@ -178,10 +234,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateSearchInput() {
         const type = searchType.value;
         searchValue.value = "";
-        searchValue.type = type === "price" || type === "appointment" ? "number" : "datetime-local";
-        searchValue.step = type === "price" ? "0.01" : type === "appointment" ? "1" : "";
-        searchValue.min = type === "price" ? "0" : type === "appointment" ? "1" : "";
-        searchValue.placeholder = type === "appointment" ? "Ex.: 12" : type === "price" ? "Ex.: 80.00" : "";
+        searchValue.type = type === "price" ? "number" : "datetime-local";
+        searchValue.step = type === "price" ? "0.01" : "";
+        searchValue.min = type === "price" ? "0" : "";
+        searchValue.placeholder = type === "price" ? "Ex.: 80.00" : "";
     }
 
     async function searchItems() {
@@ -190,18 +246,12 @@ document.addEventListener("DOMContentLoaded", () => {
             showMessage("Informe um valor para buscar.", "error");
             return;
         }
-        if (type === "appointment" && !(Number.isInteger(Number(searchValue.value)) && Number(searchValue.value) > 0)) {
-            showMessage("Informe um ID de agendamento válido.", "error");
-            return;
-        }
-        const value = type === "price" || type === "appointment" ? Number(searchValue.value) : toBrasiliaIso(searchValue.value);
-        const search = type === "appointment"
-            ? () => itemsOfAppointment(value)
-            : type === "start"
-                ? () => appointmentsItemsApi.searchStartDate(value)
-                : type === "end"
-                    ? () => appointmentsItemsApi.searchEndDate(value)
-                    : () => appointmentsItemsApi.searchPrice(value);
+        const value = type === "price" ? Number(searchValue.value) : toBrasiliaIso(searchValue.value);
+        const search = type === "start"
+            ? () => appointmentsItemsApi.searchStartDate(value)
+            : type === "end"
+                ? () => appointmentsItemsApi.searchEndDate(value)
+                : () => appointmentsItemsApi.searchPrice(value);
         await loadItems(search);
     }
 
@@ -224,11 +274,11 @@ document.addEventListener("DOMContentLoaded", () => {
             setLoading(false);
         }
         if (saved) {
-            // Mostra os itens do agendamento que acabou de ser alterado.
-            searchType.value = "appointment";
+            // Mostra o item salvo, buscando pela data de início dele.
+            searchType.value = "start";
             updateSearchInput();
-            searchValue.value = value.appointment_id;
-            await loadItems(() => itemsOfAppointment(value.appointment_id));
+            searchValue.value = localDateTimeValue(value.start_at);
+            await loadItems(() => appointmentsItemsApi.searchStartDate(value.start_at));
         }
     });
 
@@ -260,6 +310,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (removed) await loadItems();
     });
 
+    fields.service_id.addEventListener("change", () => {
+        const service = findById(services, fields.service_id.value);
+        if (service) fields.price.value = service.price;
+        updateEndFromDuration();
+    });
+    fields.start_at.addEventListener("change", updateEndFromDuration);
     document.getElementById("new-item").addEventListener("click", () => openForm());
     document.getElementById("cancel-item").addEventListener("click", () => { formCard.hidden = true; });
     document.getElementById("cancel-item-bottom").addEventListener("click", () => { formCard.hidden = true; });
@@ -268,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.key === "Enter") searchItems();
     });
     document.getElementById("clear-search").addEventListener("click", () => {
-        searchType.value = "appointment";
+        searchType.value = "start";
         updateSearchInput();
         lastSearch = null;
         loadItems(null);
@@ -278,4 +334,5 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.key === "Escape" && !deleteModal.hidden) closeDelete();
     });
     loadItems(null);
+    loadLookups();
 });
