@@ -114,9 +114,21 @@ document.addEventListener("DOMContentLoaded", () => {
     function openAnonymize(client) { pendingAnonymization = client; anonymizeName.textContent = client.name; anonymizeModal.hidden = false; confirmAnonymize.focus(); }
     function closeAnonymize() { anonymizeModal.hidden = true; pendingAnonymization = null; }
     fields.phone.addEventListener("input", () => {
+        const raw = fields.phone.value;
         const start = fields.phone.selectionStart;
-        fields.phone.value = formatPhone(fields.phone.value);
-        if (start !== null) fields.phone.setSelectionRange(start, start);
+        // Quantidade de dígitos antes do cursor: a máscara adiciona/remove "(", ")", " " e "-",
+        // então a posição do cursor precisa ser recalculada com base nos dígitos, não nos caracteres.
+        const digitsBeforeCursor = start === null ? null : raw.slice(0, start).replace(/\D/g, "").length;
+        const formatted = formatPhone(raw);
+        fields.phone.value = formatted;
+        if (digitsBeforeCursor === null) return;
+        let position = 0;
+        let seen = 0;
+        while (position < formatted.length && seen < digitsBeforeCursor) {
+            if (/\d/.test(formatted[position])) seen++;
+            position++;
+        }
+        fields.phone.setSelectionRange(position, position);
     });
     form.addEventListener("submit", async event => {
         event.preventDefault();
