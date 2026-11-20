@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes | Beleza & Arte</title>
+    <link rel="stylesheet" href="css/painel-admin.css">
+    <link rel="stylesheet" href="css/servicos-admin.css">
+    <link rel="stylesheet" href="css/resources-admin.css">
+    <link rel="stylesheet" href="css/clients-admin.css">
+    <script src="js/loading.js"></script>
+</head>
+<body>
+    <header class="admin-header">
+        <a class="brand" href="painel-admin.html"><img src="images/logo.png" alt="Beleza & Arte"><span><strong>BELEZA & ARTE</strong><small>PAINEL DE GESTÃO</small></span></a>
+        <div class="header-user"><span class="avatar">A</span><span><strong>Administrador</strong><small>Gestão do salão</small></span><a href="index.html">Sair</a></div>
+    </header>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <p class="menu-label">MENU PRINCIPAL</p>
+            <a href="painel-admin.html"><span>▦</span> Visão geral</a>
+            <a href="profissionais-admin.html"><span>♙</span> Profissionais</a>
+            <a href="servicos-admin.html"><span>✦</span> Serviços</a>
+            <a href="resources-admin.html"><span>▣</span> Recursos</a>
+            <a class="active" href="clients-admin.html"><span>♙</span> Clientes</a>
+            <a href="itens-agendamento-admin.html"><span>◷</span> Itens de agendamento</a>
+            <a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a>
+            <a href="pagamentos-admin.html"><span>R$</span> Pagamentos</a>
+            <a href="relatorios-admin.html"><span>▥</span> Relatórios</a>
+            <p class="menu-label">ATALHOS</p>
+            <a href="cadastro-profissional-admin.html"><span>＋</span> Cadastrar profissional</a>
+            <a href="remarcacao-admin.html#novo"><span>＋</span> Novo agendamento</a>
+            <a href="index.html"><span>←</span> Voltar ao site</a>
+        </aside>
+        <main class="admin-main">
+            <div class="page-heading">
+                <div><p class="eyebrow">CADASTRO DE PESSOAS</p><h1>Clientes</h1><p>Cadastre, consulte e gerencie os dados dos clientes.</p></div>
+                <button class="gold-button" id="new-client" type="button">NOVO CLIENTE <span>＋</span></button>
+            </div>
+            <section class="client-toolbar" aria-label="Busca e filtros">
+                <form id="client-search-form" class="client-search-form">
+                    <select id="client-filter-type" aria-label="Tipo de filtro">
+                        <option value="name">Nome</option>
+                        <option value="phone">Telefone</option>
+                        <option value="email">E-mail</option>
+                        <option value="created">Data de cadastro</option>
+                    </select>
+                    <label class="search-box" id="client-text-search">⌕<input id="client-filter-value" type="search" placeholder="Informe o nome" aria-label="Valor do filtro"></label>
+                    <input id="client-created-value" type="datetime-local" aria-label="Data de cadastro" hidden>
+                    <button class="outline-button" type="submit">BUSCAR</button>
+                    <button class="outline-button" id="clear-client-search" type="button">LIMPAR</button>
+                </form>
+            </section>
+            <p id="client-error" class="client-error" role="alert" hidden></p>
+            <section class="client-form-card panel-card" id="client-form-card" hidden>
+                <div class="panel-heading"><div><h2 id="client-form-title">Novo cliente</h2><p>Os campos com * são obrigatórios.</p></div><button class="close-button" id="cancel-client" type="button" aria-label="Fechar formulário">×</button></div>
+                <form id="client-form" novalidate>
+                    <input id="client-id" type="hidden">
+                    <div class="client-form-grid">
+                        <label class="admin-field">Nome *<input id="client-name" type="text" maxlength="120" required><small class="erro" data-error-for="name"></small></label>
+                        <label class="admin-field">Telefone *<input id="client-phone" type="tel" inputmode="tel" maxlength="15" required><small class="erro" data-error-for="phone"></small></label>
+                        <label class="admin-field">E-mail<input id="client-email" type="email" maxlength="120"><small class="erro" data-error-for="email"></small></label>
+                    </div>
+                    <div class="client-form-actions"><button class="outline-button" id="cancel-client-bottom" type="button">CANCELAR</button><button class="gold-button" id="save-client" type="submit">SALVAR CLIENTE <span>→</span></button></div>
+                </form>
+            </section>
+            <section class="panel-card table-card client-list-card">
+                <div class="panel-heading"><div><h2>Clientes cadastrados</h2><p id="client-count">Use os filtros para buscar clientes.</p></div><span class="loading-indicator" id="client-loading" hidden>Carregando...</span></div>
+                <div class="client-table client-table-head"><span>Nome</span><span>Telefone</span><span>E-mail</span><span>Cadastro</span><span>Ações</span></div>
+                <div id="client-list"></div>
+            </section>
+        </main>
+    </div>
+    <div id="client-delete-modal" class="delete-modal" hidden role="dialog" aria-modal="true" aria-labelledby="client-delete-title">
+        <div class="delete-modal-backdrop" data-close-client-delete></div>
+        <div class="delete-modal-card"><button class="delete-modal-close" type="button" data-close-client-delete aria-label="Fechar confirmação">×</button><span class="delete-modal-icon">!</span><h2 id="client-delete-title">Excluir cliente?</h2><p>Essa ação não poderá ser desfeita.</p><strong id="client-delete-name"></strong><div class="delete-modal-actions"><button class="outline-button" type="button" data-close-client-delete>Cancelar</button><button class="delete-confirm-button" id="confirm-delete-client" type="button">Excluir cliente</button></div></div>
+    </div>
+    <div id="client-anonymize-modal" class="delete-modal anonymize-modal" hidden role="dialog" aria-modal="true" aria-labelledby="client-anonymize-title">
+        <div class="delete-modal-backdrop" data-close-client-anonymize></div>
+        <div class="delete-modal-card"><button class="delete-modal-close" type="button" data-close-client-anonymize aria-label="Fechar confirmação">×</button><span class="delete-modal-icon">LGPD</span><h2 id="client-anonymize-title">Anonimizar dados pessoais?</h2><p>Os dados pessoais deste cliente serão apagados. O histórico de agendamentos será mantido.</p><strong id="client-anonymize-name"></strong><div class="delete-modal-actions"><button class="outline-button" type="button" data-close-client-anonymize>Cancelar</button><button class="delete-confirm-button" id="confirm-anonymize-client" type="button">Confirmar anonimização</button></div></div>
+    </div>
+    <div id="client-notifications" class="service-notifications" role="status" aria-live="polite" aria-atomic="true"></div>
+    <script src="js/api/client-api.js"></script>
+    <script src="js/clients-admin.js"></script>
+</body>
+</html>

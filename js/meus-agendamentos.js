@@ -1,15 +1,16 @@
-
+// Agenda da profissional logada: agendamentos da API (searchProfessionalAppointments),
+// mostrando só os serviços (items) dela. Requer appointment-api.js e cancelamentos.js.
 document.addEventListener("DOMContentLoaded", () => {
     const dadosProfissional = document.getElementById("dados-profissional");
     const listaAgendamentos = document.getElementById("lista-agendamentos");
     const botaoExcluirProfissional = document.getElementById("botao-excluir-profissional");
-    let profissionalAtual = null;
-
-    try {
-        profissionalAtual = JSON.parse(localStorage.getItem("belezaArteProfissionalAtual"));
-    } catch (erro) {
-        console.error("Erro ao carregar profissional:", erro);
-    }
+    const api = window.appointmentApi;
+    const { STATUS } = api;
+    const { formatDate, formatTime } = api.time;
+    const profissionalAtual = obterProfissionalAtual();
+    let nomes = { clientes: new Map(), servicos: new Map(), profissionais: new Map() };
+    let agendamentos = [];
+    let carregando = false;
 
     if (!profissionalAtual) {
         if (dadosProfissional) {
@@ -19,13 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (listaAgendamentos) {
-            listaAgendamentos.innerHTML = `
-                <div class="nenhum-agendamento">
-                    <div class="icone-calendario"> ▣ </div>
-                    <h2> Faça login </h2>
-                    <p> Entre na sua conta profissional para visualizar seus agendamentos. </p>
-                </div>
-            `;
+            mostrarMensagem("Faça login", "Entre na sua conta profissional para visualizar seus agendamentos.");
         }
 
         return;
@@ -47,243 +42,207 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    renderizarAgendamentos();
+    function mostrarMensagem(titulo, texto) {
+        listaAgendamentos.innerHTML = `
+            <div class="nenhum-agendamento">
+                <div class="icone-calendario"> ▣ </div>
+                <h2> ${escaparHTML(titulo)} </h2>
+                <p> ${escaparHTML(texto)} </p>
+            </div>
+        `;
+    }
+
+    function inicioDe(agendamento) {
+        const primeiro = itensDaProfissional(agendamento, profissionalAtual.id)[0];
+        return primeiro ? new Date(primeiro.start_at).getTime() : 0;
+    }
+
+    // Em andamento (agendado/confirmado) primeiro, do mais próximo ao mais distante; depois os finalizados.
+    function ordenar(lista) {
+        const ativos = lista.filter(agendamento => !api.isFinalStatus(agendamento.status)).sort((a, b) => inicioDe(a) - inicioDe(b));
+        const finalizados = lista.filter(agendamento => api.isFinalStatus(agendamento.status)).sort((a, b) => inicioDe(b) - inicioDe(a));
+        return [...ativos, ...finalizados];
+    }
+
+    async function carregarAgendamentos() {
+        if (carregando) return;
+        carregando = true;
+        mostrarMensagem("Carregando...", "Buscando seus agendamentos na API.");
+        try {
+            const [lista, nomesCarregados] = await Promise.all([
+                api.searchAppointmentsByProfessional(profissionalAtual.id),
+                carregarNomesAgenda()
+            ]);
+            nomes = nomesCarregados;
+            agendamentos = ordenar(lista.filter(agendamento => itensDaProfissional(agendamento, profissionalAtual.id).length > 0));
+            renderizarAgendamentos();
+            if (typeof notificarDesistencias === "function") {
+                notificarDesistencias(agendamentos, nomes, profissionalAtual.id);
+            }
+        } catch (erro) {
+            mostrarMensagem("Não foi possível carregar os agendamentos", erro.message || "Tente novamente mais tarde.");
+        } finally {
+            carregando = false;
+        }
+    }
+
+    function botoesDeStatus(agendamento) {
+        const status = String(agendamento.status || "").toUpperCase();
+        const id = escaparHTML(agendamento.id);
+        const botoes = [];
+        if (api.canChangeTo(status, STATUS.CONFIRMADO)) botoes.push(`<button type="button" class="botao-status-agendamento confirmar" data-acao="confirmar" data-id="${id}"> ✓ CONFIRMAR </button>`);
+        if (api.canChangeTo(status, STATUS.CONCLUIDO)) botoes.push(`<button type="button" class="botao-status-agendamento concluir" data-acao="concluir" data-id="${id}"> ✓ CONCLUIR </button>`);
+        if (api.canChangeTo(status, STATUS.NAO_COMPARECEU)) botoes.push(`<button type="button" class="botao-status-agendamento nao-compareceu" data-acao="nao-compareceu" data-id="${id}"> NÃO COMPARECEU </button>`);
+        if (api.canChangeTo(status, STATUS.CANCELADO)) botoes.push(`<button type="button" class="botao-cancelar-servico" data-acao="cancelar" data-id="${id}"> ✕ CANCELAR </button>`);
+        return botoes.join("");
+    }
 
     function renderizarAgendamentos() {
-        let agendamentos = [];
-
-        try {
-            agendamentos = JSON.parse(localStorage.getItem("belezaArteAgendamentos")) || [];
-        } catch (erro) {
-            console.error("Erro ao carregar agendamentos:", erro);
-            agendamentos = [];
-        }
-
-        if (!Array.isArray(agendamentos)) {
-            agendamentos = [];
-        }
-
-        const meusAgendamentos = [];
-
-        agendamentos.forEach(agendamento => {
-            if (!agendamento || !Array.isArray(agendamento.servicos)) {
-                return;
-            }
-
-            const servicosDaProfissional = agendamento.servicos.map((servico, indiceOriginal) => {
-                return { ...servico, indiceOriginal: indiceOriginal };
-            })
-            .filter(servico => {
-                return (String(servico.profissionalId || "") === String(profissionalAtual.id || ""));
-            });
-
-            if (servicosDaProfissional.length > 0) {
-                meusAgendamentos.push({ ...agendamento, servicos: servicosDaProfissional });
-            }
-        });
-
-        if (meusAgendamentos.length === 0) {
-            listaAgendamentos.innerHTML = `
-                <div class="nenhum-agendamento">
-                    <div class="icone-calendario"> ▣ </div>
-                    <h2> Nenhum agendamento </h2>
-                    <p> Você não possui agendamentos no momento. </p>
-                </div>
-            `;
-
+        if (agendamentos.length === 0) {
+            mostrarMensagem("Nenhum agendamento", "Você não possui agendamentos no momento.");
             return;
         }
 
-        listaAgendamentos.innerHTML = "";
+        listaAgendamentos.innerHTML = agendamentos.map(agendamento => {
+            const status = String(agendamento.status || "").toUpperCase();
+            const itens = itensDaProfissional(agendamento, profissionalAtual.id);
+            const cliente = nomes.clientes.get(String(agendamento.idClient));
+            const nomeCliente = cliente?.name || `Cliente #${agendamento.idClient}`;
+            const primeiro = itens[0];
 
-        meusAgendamentos.forEach(agendamento => {
-            const card = document.createElement("div");
-            card.className = "card-agendamento";
+            const listaServicosHTML = itens.map((item, index) => `
+                <div class="servico-agendado">
+                    <div class="icone-servico-agendado">
+                        <span> ${index + 1} </span>
+                    </div>
 
-            const servicosOrdenados = [...agendamento.servicos].sort((a, b) => {
-                return (criarDataHora(a.data, a.hora) - criarDataHora(b.data, b.hora));
-            });
+                    <div class="dados-servico-agendado">
+                        <strong class="nome-servico-agendado">${escaparHTML(nomes.servicos.get(String(item.service_id))?.name || `Serviço #${item.service_id}`)}</strong>
 
-            let listaServicosHTML = "";
-
-            servicosOrdenados.forEach((servico, index) => {
-                const nomeServico = servico.servico || servico.nomeServico || "Serviço";
-
-                listaServicosHTML += `
-                    <div class="servico-agendado">
-                        <div class="icone-servico-agendado">
-                            <span> ${index + 1} </span>
-                        </div>
-
-                        <div class="dados-servico-agendado">
-                            <strong class="nome-servico-agendado">${escaparHTML(nomeServico)} </strong>
-
-                            <div class="detalhes-servico-agendado">
-                                <div class="detalhe-agendamento">
-                                    <small>DATA</small>
-                                    <strong>${escaparHTML(formatarData(servico.data))}</strong>
-                                </div>
-
-                                <div class="detalhe-agendamento">
-                                    <small> HORÁRIO </small>
-                                    <strong class="horario-destaque">${escaparHTML(servico.hora || "—")}</strong>
-                                </div>
-
-                                <div class="detalhe-agendamento">
-                                    <small> PROFISSIONAL </small>
-                                    <strong> ${escaparHTML(servico.profissional || nomeProfissional || "—")}</strong>
-                                </div>
+                        <div class="detalhes-servico-agendado">
+                            <div class="detalhe-agendamento">
+                                <small>DATA</small>
+                                <strong>${escaparHTML(formatDate(item.start_at))}</strong>
                             </div>
 
-                            <div class="acao-servico">
-                                <button type="button" class="botao-cancelar-servico" data-agendamento-id="${escaparAtributo(agendamento.id)}" data-servico-indice="${servico.indiceOriginal}"> ✕ CANCELAR ESTE SERVIÇO </button>
+                            <div class="detalhe-agendamento">
+                                <small> HORÁRIO </small>
+                                <strong class="horario-destaque">${escaparHTML(formatTime(item.start_at))}–${escaparHTML(formatTime(item.end_at))}</strong>
+                            </div>
+
+                            <div class="detalhe-agendamento">
+                                <small> PROFISSIONAL </small>
+                                <strong> ${escaparHTML(nomeProfissional)}</strong>
                             </div>
                         </div>
                     </div>
-                `;
-            });
+                </div>
+            `).join("");
 
-            const primeiroServico = servicosOrdenados[0];
+            const cancelamento = status === STATUS.CANCELADO
+                ? `<div class="detalhe-cancelamento-agenda">${escaparHTML(textoCanceladoPor(agendamento.cancelledBy))}${agendamento.cancelReason ? ` · Motivo: ${escaparHTML(agendamento.cancelReason)}` : ""}</div>`
+                : "";
 
-            card.innerHTML = `
-                <div class="cabecalho-card-agendamento">
-                    <div class="cliente-agendamento">
-                        <div class="icone-cliente"> ${escaparHTML((agendamento.nome || "C").trim().charAt(0).toUpperCase())} </div>
+            return `
+                <div class="card-agendamento" data-id="${escaparHTML(agendamento.id)}">
+                    <div class="cabecalho-card-agendamento">
+                        <div class="cliente-agendamento">
+                            <div class="icone-cliente"> ${escaparHTML(nomeCliente.trim().charAt(0).toUpperCase())} </div>
+
+                            <div>
+                                <h3> ${escaparHTML(nomeCliente)}</h3>
+                                <span> Agendamento #${escaparHTML(agendamento.id)} · ${itens.length} ${itens.length === 1 ? "serviço" : "serviços"} com você</span>
+                            </div>
+                        </div>
+
+                        <div class="status-agendamento status-${escaparHTML(status.toLowerCase().replace(/_/g, "-"))}">
+                            <span> ${escaparHTML(api.statusLabel(status).toUpperCase())} </span>
+                        </div>
+                    </div>
+
+                    <div class="dados-cliente-agendamento">
+                        <div>
+                            <small> TELEFONE </small>
+                            <strong> ${escaparHTML(cliente?.phone || "—")} </strong>
+                        </div>
 
                         <div>
-                            <h3> ${escaparHTML(agendamento.nome || "Cliente")}</h3>
-                            <span> ${servicosOrdenados.length} ${servicosOrdenados.length === 1 ? " serviço agendado" : " serviços agendados"}</span>
+                            <small> E-MAIL </small>
+                            <strong> ${escaparHTML(cliente?.email || "—")}</strong>
                         </div>
                     </div>
 
-                    <div class="status-agendamento">
-                        <span> AGENDADO </span>
-                    </div>
-                </div>
+                    ${agendamento.notes ? `<div class="observacoes-agenda"><small>OBSERVAÇÕES</small><p>${escaparHTML(agendamento.notes)}</p></div>` : ""}
+                    ${cancelamento}
 
-                <div class="dados-cliente-agendamento">
-                    <div>
-                        <small> TELEFONE </small>
-                        <strong> ${escaparHTML(agendamento.telefone || "—")} </strong>
+                    <div class="titulo-servicos-agendamento">
+                        <div class="linha-titulo"></div>
+                        <h4>HORÁRIOS DOS SERVIÇOS</h4>
+                        <div class="linha-titulo"></div>
                     </div>
 
-                    <div>
-                        <small> E-MAIL </small>
-                        <strong> ${escaparHTML(agendamento.email || "—")}</strong>
-                    </div>
-                </div>
+                    <div class="lista-servicos-agendados">${listaServicosHTML}</div>
 
-                <div class="titulo-servicos-agendamento">
-                    <div class="linha-titulo"></div>
-                    <h4>HORÁRIOS DOS SERVIÇOS</h4>
-                    <div class="linha-titulo"></div>
-                </div>
-
-                <div class="lista-servicos-agendados">${listaServicosHTML}</div>
-
-                <div class="rodape-card-agendamento">
-                    <div class="resumo-primeiro-horario">
-                        <small>PRIMEIRO HORÁRIO</small>
-                        <strong>${escaparHTML(formatarData(primeiroServico?.data || ""))} às ${escaparHTML(primeiroServico?.hora || "—")}</strong>
+                    <div class="rodape-card-agendamento">
+                        <div class="resumo-primeiro-horario">
+                            <small>PRIMEIRO HORÁRIO</small>
+                            <strong>${escaparHTML(primeiro ? `${formatDate(primeiro.start_at)} às ${formatTime(primeiro.start_at)}` : "—")}</strong>
+                        </div>
+                        <div class="acoes-status-agendamento">${botoesDeStatus(agendamento)}</div>
                     </div>
                 </div>
             `;
-
-            const botoesCancelar = card.querySelectorAll(".botao-cancelar-servico");
-
-            botoesCancelar.forEach(botao => {
-                botao.addEventListener("click", () => {
-                    const idAgendamento = botao.dataset.agendamentoId;
-                    const indiceServico = Number(botao.dataset.servicoIndice);
-
-                    cancelarApenasUmServico(idAgendamento, indiceServico);
-                });
-            });
-
-            listaAgendamentos.appendChild(card);
-        });
+        }).join("");
     }
 
-    function cancelarApenasUmServico(idAgendamento, indiceServico) {
-        const confirmar = confirm("Deseja cancelar somente este serviço?\n\n" + "O cancelamento ficará registrado no histórico.");
+    async function executarAcao(botao) {
+        const agendamento = agendamentos.find(item => String(item.id) === botao.dataset.id);
+        if (!agendamento || carregando) return;
+        const id = Number(agendamento.id);
+        const acao = botao.dataset.acao;
+        let operacao;
+        let sucesso;
 
-        if (!confirmar) {
+        if (acao === "cancelar") {
+            const motivo = prompt(`Informe o motivo do cancelamento do agendamento #${id}.\nTodos os serviços desta visita serão cancelados.`);
+            if (motivo === null) return;
+            if (!motivo.trim()) {
+                alert("Informe o motivo do cancelamento.");
+                return;
+            }
+            operacao = () => api.cancelAppointment(id, "SALAO", motivo.trim());
+            sucesso = "Agendamento cancelado. O cancelamento aparece no histórico.";
+        } else if (acao === "confirmar") {
+            operacao = () => api.confirmAppointment(id);
+            sucesso = "Agendamento confirmado.";
+        } else if (acao === "concluir") {
+            if (!confirm(`Marcar o agendamento #${id} como concluído?`)) return;
+            operacao = () => api.completeAppointment(id);
+            sucesso = "Agendamento concluído.";
+        } else if (acao === "nao-compareceu") {
+            if (!confirm(`Marcar que o cliente não compareceu ao agendamento #${id}?`)) return;
+            operacao = () => api.noShowAppointment(id);
+            sucesso = "Agendamento marcado como não compareceu.";
+        } else {
             return;
         }
 
-        let agendamentos = [];
-
+        const botoesDoCard = botao.closest(".card-agendamento")?.querySelectorAll("button[data-acao]") || [];
+        botoesDoCard.forEach(item => { item.disabled = true; });
         try {
-            agendamentos = JSON.parse(localStorage.getItem("belezaArteAgendamentos")) || [];
+            await operacao();
+            alert(sucesso);
+            await carregarAgendamentos();
         } catch (erro) {
-            alert("Não foi possível carregar os agendamentos.");
-            return;
+            alert(`Não foi possível atualizar o agendamento: ${erro.message}`);
+            botoesDoCard.forEach(item => { item.disabled = false; });
         }
-
-        if (!Array.isArray(agendamentos)) {
-            alert("Os agendamentos estão inválidos.");
-            return;
-        }
-
-        const indiceAgendamento = agendamentos.findIndex(agendamento =>
-            String(agendamento.id) === String(idAgendamento));
-
-        if (indiceAgendamento === -1) {
-            alert("Agendamento não encontrado.");
-            return;
-        }
-
-        const agendamento = agendamentos[indiceAgendamento];
-
-        if (
-            !Array.isArray(agendamento.servicos)) {
-            alert("Este agendamento não possui serviços.");
-            return;
-        }
-
-        if (indiceServico < 0 || indiceServico >= agendamento.servicos.length) {
-            alert("Serviço não encontrado.");
-            return;
-        }
-
-        const servicoCancelado = agendamento.servicos[indiceServico];
-
-        if (String(servicoCancelado.profissionalId || "") !== String(profissionalAtual.id || "")) {
-            alert("Você não pode cancelar este serviço.");
-            return;
-        }
-
-        const registroCancelamento = registrarCancelamento({
-            agendamento: agendamento,
-            servico: servicoCancelado,
-            canceladoPor: "PROFISSIONAL"
-        });
-
-        if (!registroCancelamento) {
-            alert("Não foi possível registrar o cancelamento.");
-            return;
-        }
-
-        agendamento.servicos.splice(indiceServico, 1);
-
-        if (agendamento.servicos.length === 0) {
-            agendamentos.splice(indiceAgendamento, 1);
-        }
-
-        try {
-            localStorage.setItem("belezaArteAgendamentos", JSON.stringify(agendamentos));
-        } catch (erro) {
-            console.error(erro);
-            alert("Erro ao salvar o cancelamento.");
-            return;
-        }
-
-        salvarNotificacaoCancelamento(registroCancelamento, "CLIENTE");
-
-        const nomeServico = servicoCancelado.servico || servicoCancelado.nomeServico || "Serviço";
-        alert(`"${nomeServico}" foi cancelado com sucesso.\n\n` + "O cancelamento foi salvo no histórico.");
-        window.location.reload();
     }
+
+    listaAgendamentos.addEventListener("click", event => {
+        const botao = event.target.closest("button[data-acao]");
+        if (botao) executarAcao(botao);
+    });
 
     if (botaoExcluirProfissional) {
         botaoExcluirProfissional.addEventListener("click", async () => {
@@ -293,9 +252,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            botaoExcluirProfissional.disabled = true;
             try {
                 await professionalApi.remove(profissionalAtual.id);
             } catch (erro) {
+                botaoExcluirProfissional.disabled = false;
                 alert(erro.message || "Não foi possível excluir seu cadastro.");
                 return;
             }
@@ -304,49 +265,9 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "index.html";
         });
     }
+
+    carregarAgendamentos();
 });
-
-function formatarData(data) {
-    if (!data) {
-        return "—";
-    }
-
-    const valor = String(data);
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) {
-        const [ano, mes, dia] = valor.split("-");
-        return `${dia}/${mes}/${ano}`;
-    }
-
-    return valor;
-}
-
-function criarDataHora(data, hora) {
-    if (!data) {
-        return new Date(8640000000000000);
-    }
-
-    const partes = String(data).split("-");
-
-    if (partes.length !== 3) {
-        return new Date(8640000000000000);
-    }
-
-    const ano = Number(partes[0]);
-    const mes = Number(partes[1]) - 1;
-    const dia = Number(partes[2]);
-
-    let horas = 0;
-    let minutos = 0;
-
-    if (hora) {
-        const partesHora = String(hora).split(":");
-        horas = Number(partesHora[0] || 0);
-        minutos = Number(partesHora[1] || 0);
-    }
-
-    return new Date(ano, mes, dia, horas, minutos);
-}
 
 function escaparHTML(valor) {
     return String(valor ?? "")
@@ -355,8 +276,4 @@ function escaparHTML(valor) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-}
-
-function escaparAtributo(valor) {
-    return escaparHTML(valor);
 }

@@ -248,3 +248,14 @@ body {
         flex-direction: column;
     }
 }
+
+.cabecalho-historico small {
+    display: block;
+    margin-top: 4px;
+    color: var(--cinza);
+    font-size: 11px;
+}
+
+.dado-historico-motivo {
+    grid-column: 1 / -1;
+}

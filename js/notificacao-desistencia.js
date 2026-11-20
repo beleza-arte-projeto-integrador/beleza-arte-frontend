@@ -1,60 +1,41 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const profissionalAtual = obterProfissionalAtualNotificacao();
+// Aviso de desistências: agendamentos da profissional cancelados pelo CLIENTE nos últimos dias.
+// Os dados vêm da API (chamado por meus-agendamentos.js com a lista já carregada);
+// nada é gravado no localStorage, então o aviso volta a aparecer ao recarregar a página.
+const DIAS_AVISO_DESISTENCIA = 7;
 
-    if (!profissionalAtual) {
-        return;
-    }
+function notificarDesistencias(agendamentos, nomes, profissionalId) {
+    const limite = Date.now() - DIAS_AVISO_DESISTENCIA * 24 * 60 * 60 * 1000;
+    const desistencias = (agendamentos || [])
+        .filter(agendamento => String(agendamento.status || "").toUpperCase() === "CANCELADO")
+        .filter(agendamento => String(agendamento.cancelledBy || "").toUpperCase() === "CLIENTE")
+        .filter(agendamento => new Date(agendamento.cancelledAt || 0).getTime() >= limite)
+        .sort((a, b) => new Date(b.cancelledAt).getTime() - new Date(a.cancelledAt).getTime());
 
-    mostrarNotificacoesCancelamento(profissionalAtual);
-});
-
-function obterProfissionalAtualNotificacao() {
-    try {
-        return JSON.parse(localStorage.getItem("belezaArteProfissionalAtual"));
-    } catch (erro) {
-        return null;
-    }
-}
-
-function mostrarNotificacoesCancelamento(profissional) {
-    let notificacoes = [];
-
-    try {
-        notificacoes = JSON.parse(localStorage.getItem("belezaArteNotificacoesCancelamento")) || [];
-    } catch (erro) {
-        notificacoes = [];
-    }
-
-    if (!Array.isArray(notificacoes)) {
-        notificacoes = [];
-    }
-
-    const minhasNotificacoes = notificacoes.filter(notificacao => {
-        return (String(notificacao.destinatario || "").toUpperCase() === "PROFISSIONAL" && String(notificacao.registro?.profissionalId || "") === String(profissional.id || ""));
-    });
-
-    const naoLidas = minhasNotificacoes.filter(notificacao => !notificacao.lida);
-
-    if (naoLidas.length === 0) {
-        return;
-    }
-
-    criarAvisoCancelamento(naoLidas);
-}
-
-function criarAvisoCancelamento(notificacoes) {
     const avisoAnterior = document.getElementById("aviso-cancelamento-cliente");
-
     if (avisoAnterior) {
         avisoAnterior.remove();
     }
 
+    if (desistencias.length === 0) {
+        return;
+    }
+
+    criarAvisoCancelamento(desistencias, nomes, profissionalId);
+}
+
+function criarAvisoCancelamento(desistencias, nomes, profissionalId) {
+    const { formatDate, formatTime } = window.appointmentApi.time;
+    const agendamento = desistencias[0];
+    const itens = window.appointmentApi.sortItems(agendamento.items || [])
+        .filter(item => !profissionalId || String(item.professional_id) === String(profissionalId));
+    const primeiroItem = itens[0];
+    const cliente = nomes?.clientes?.get(String(agendamento.idClient))?.name || `Cliente #${agendamento.idClient}`;
+    const servicos = itens.map(item => nomes?.servicos?.get(String(item.service_id))?.name || `Serviço #${item.service_id}`).join(", ") || "Serviço";
+    const outros = desistencias.length - 1;
+
     const aviso = document.createElement("div");
     aviso.id = "aviso-cancelamento-cliente";
     aviso.className = "aviso-cancelamento-cliente";
-
-    const registro = notificacoes[0].registro;
-
     aviso.innerHTML = `
         <div class="icone-notificacao">!</div>
 
@@ -63,12 +44,13 @@ function criarAvisoCancelamento(notificacoes) {
 
             <p>
                 O cliente
-                <strong>${escaparHTML(registro.cliente || "Cliente")} </strong>
+                <strong>${escaparHTMLNotificacao(cliente)}</strong>
                 cancelou o serviço
-                <strong>${escaparHTML(registro.servico || "Serviço")}</strong>.
+                <strong>${escaparHTMLNotificacao(servicos)}</strong>.
+                ${agendamento.cancelReason ? `Motivo: ${escaparHTMLNotificacao(agendamento.cancelReason)}.` : ""}
             </p>
 
-            <small>${escaparHTML(registro.data ? formatarDataNotificacao(registro.data) : "Data não informada")} às ${escaparHTML(registro.hora || "—")}</small>
+            <small>${escaparHTMLNotificacao(primeiroItem ? `${formatDate(primeiroItem.start_at)} às ${formatTime(primeiroItem.start_at)}` : "Data não informada")}${outros > 0 ? ` · e mais ${outros} cancelamento${outros === 1 ? "" : "s"} nos últimos ${DIAS_AVISO_DESISTENCIA} dias` : ""}</small>
         </div>
 
         <button type="button" class="fechar-notificacao" aria-label="Fechar"> × </button>
@@ -76,54 +58,10 @@ function criarAvisoCancelamento(notificacoes) {
 
     document.body.appendChild(aviso);
 
-    const botaoFechar = aviso.querySelector(".fechar-notificacao");
-
-    if (botaoFechar) {
-        botaoFechar.addEventListener("click", () => {
-            marcarNotificacoesComoLidas(notificacoes);
-            aviso.remove();
-        });
-    }
+    aviso.querySelector(".fechar-notificacao")?.addEventListener("click", () => aviso.remove());
 }
 
-function marcarNotificacoesComoLidas(notificacoesLidas) {
-    let notificacoes = [];
-
-    try {
-        notificacoes = JSON.parse(localStorage.getItem("belezaArteNotificacoesCancelamento")) || [];
-    } catch (erro) {
-        return;
-    }
-
-    const ids = notificacoesLidas.map(notificacao => notificacao.id);
-
-    notificacoes = notificacoes.map(notificacao => {
-        if (ids.includes(notificacao.id)) {
-            return { ...notificacao, lida: true };
-        }
-
-        return notificacao;
-    });
-
-    localStorage.setItem("belezaArteNotificacoesCancelamento", JSON.stringify(notificacoes));
-}
-
-function formatarDataNotificacao(data) {
-    if (!data) {
-        return "—";
-    }
-
-    const valor = String(data);
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) {
-        const [ano, mes, dia] = valor.split("-");
-        return `${dia}/${mes}/${ano}`;
-    }
-
-    return valor;
-}
-
-function escaparHTML(valor) {
+function escaparHTMLNotificacao(valor) {
     return String(valor ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")

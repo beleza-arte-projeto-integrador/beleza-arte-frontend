@@ -68,7 +68,22 @@
     }
 
     function list() {
-        return request("").then(normalizeList);
+        const specialties = [
+            "Cabeleireira",
+            "Esteticista",
+            "Manicure",
+            "Maquiadora",
+            "Depiladora",
+            "Designer de Sobrancelhas"
+        ];
+        return Promise.all(specialties.map(specialty => search("specialty", specialty)))
+            .then(groups => {
+                const professionals = new Map();
+                groups.forEach(group => group.forEach(professional => {
+                    professionals.set(Number(professional.id), professional);
+                }));
+                return [...professionals.values()];
+            });
     }
 
     function search(type, value) {
