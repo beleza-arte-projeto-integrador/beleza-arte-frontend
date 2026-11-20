@@ -48,11 +48,34 @@ document.addEventListener("DOMContentLoaded", () => {
         window.setTimeout(() => notification.remove(), 200);
     }
 
+    const editSpecialty = document.getElementById("edit-specialty");
+
+    function addOption(select, value) {
+        if (!value || [...select.options].some(option => option.value === value)) return;
+        select.add(new Option(value, value));
+    }
+
+    // Especialidades = categorias dos serviços cadastrados. O filtro inclui também
+    // as especialidades antigas, para que profissionais já cadastrados continuem aparecendo.
+    async function loadSpecialtyOptions() {
+        try {
+            const [categories, searchable] = await Promise.all([
+                professionalApi.specialties(),
+                professionalApi.searchableSpecialties()
+            ]);
+            searchable.forEach(value => addOption(specialty, value));
+            categories.forEach(value => addOption(editSpecialty, value));
+        } catch {
+            showNotification("Não foi possível carregar as especialidades (categorias de serviço).", "error");
+        }
+    }
+
     function openEditModal(professional) {
         professionalBeingEdited = professional;
         formError.textContent = "";
         document.getElementById("edit-name").value = professional.name || "";
-        document.getElementById("edit-specialty").value = professional.specialty || "";
+        addOption(editSpecialty, professional.specialty); // mantém valores fora da lista
+        editSpecialty.value = professional.specialty || "";
         document.getElementById("edit-phone").value = professional.phone || "";
         document.getElementById("edit-email").value = professional.email || "";
         document.getElementById("edit-cpf").value = professional.cpf || "";
@@ -203,5 +226,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    loadSpecialtyOptions();
     loadProfessionals();
 });

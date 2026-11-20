@@ -41,22 +41,11 @@
                         <label class="admin-field">Telefone<input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999" maxlength="15" required><small class="erro" id="erro-telefone"></small></label>
                         <label class="admin-field field-full">E-mail<input type="email" id="email" name="email" placeholder="seuemail@email.com" autocomplete="email" required><small class="erro" id="erro-email"></small></label>
                     </div>
-                    <div class="admin-form-section"><span>02</span><div><h3>Dados profissionais</h3><p>Defina a especialidade e os serviços realizados.</p></div></div>
+                    <div class="admin-form-section"><span>02</span><div><h3>Dados profissionais</h3><p>Defina a especialidade e os anos de experiência.</p></div></div>
                     <div class="admin-form-grid">
-                        <label class="admin-field">Especialidade<select id="especialidade" name="especialidade" required><option value="">Selecione</option><option>Cabeleireira</option><option>Manicure</option><option>Esteticista</option><option>Maquiadora</option><option>Designer de Sobrancelhas</option></select><small class="erro" id="erro-especialidade"></small></label>
-                        <label class="admin-field">Tempo de experiência<select id="experiencia" name="experiencia" required><option value="">Selecione</option><option>Menos de 1 ano</option><option>1 a 3 anos</option><option>4 a 7 anos</option><option>8 a 10 anos</option><option>Mais de 10 anos</option></select><small class="erro" id="erro-experiencia"></small></label>
+                        <label class="admin-field">Especialidade<select id="especialidade" name="especialidade" required><option value="">Carregando especialidades...</option></select><small class="admin-hint">As opções são os serviços cadastrados no salão.</small><small class="erro" id="erro-especialidade"></small></label>
+                        <label class="admin-field">Anos de experiência<input type="number" id="experiencia" name="experiencia" placeholder="Ex.: 3" min="0" max="80" step="1" inputmode="numeric" required><small class="erro" id="erro-experiencia"></small></label>
                     </div>
-                    <div class="admin-field services-field"><label>Serviços realizados</label><div class="admin-services">
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Corte" data-especialidades="Cabeleireira"><span>Corte</span></label>
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Coloração" data-especialidades="Cabeleireira"><span>Coloração</span></label>
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Mechas" data-especialidades="Cabeleireira"><span>Mechas</span></label>
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Escova" data-especialidades="Cabeleireira"><span>Escova</span></label>
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Penteados" data-especialidades="Cabeleireira,Maquiadora"><span>Penteados</span></label>
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Manicure" data-especialidades="Manicure"><span>Manicure</span></label>
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Limpeza de pele" data-especialidades="Esteticista"><span>Limpeza de pele</span></label>
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Maquiagem" data-especialidades="Maquiadora"><span>Maquiagem</span></label>
-                        <label class="checkbox"><input type="checkbox" name="servicos" value="Design de sobrancelhas" data-especialidades="Designer de Sobrancelhas"><span>Design de sobrancelhas</span></label>
-                    </div><small class="erro" id="erro-servicos"></small></div>
                     <div class="admin-form-section"><span>03</span><div><h3>Dados de acesso</h3><p>Esses dados serão usados para entrar na plataforma.</p></div></div>
                     <div class="admin-form-grid">
                         <label class="admin-field field-full">Nome de usuário<input type="text" id="usuario" name="usuario" placeholder="Ex.: maria.silva" autocomplete="username" maxlength="30" required><small class="admin-hint">Use letras, números, ponto, hífen ou underline.</small><small class="erro" id="erro-usuario"></small></label>
@@ -70,6 +59,6 @@
             </section>
         </main>
     </div>
-    <script src="js/api/professional-api.js"></script><script src="js/cadastro-profissional.js"></script>
+    <script src="js/api/service-api.js"></script><script src="js/api/professional-api.js"></script><script src="js/cadastro-profissional.js"></script>
 </body>
 </html>
