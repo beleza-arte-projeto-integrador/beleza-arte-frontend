@@ -120,8 +120,11 @@
 
     const originalFetch = window.fetch.bind(window);
 
+    // Enquanto > 0, as requisições não mostram o overlay (ver Loading.quietly).
+    let quiet = 0;
+
     window.fetch = function (input, init) {
-        if (init && init.skipLoading) {
+        if ((init && init.skipLoading) || quiet > 0) {
             return originalFetch(input, init);
         }
         start();
@@ -135,5 +138,20 @@
         return result.finally(stop);
     };
 
-    window.Loading = { show: start, hide: stop };
+    /**
+     * Executa uma tarefa em segundo plano sem o overlay.
+     * Atenção: qualquer fetch disparado enquanto a tarefa roda também fica sem overlay,
+     * então a tela deve ter o próprio indicador para essas ações.
+     * @template T @param {() => Promise<T>} task @returns {Promise<T>}
+     */
+    async function quietly(task) {
+        quiet += 1;
+        try {
+            return await task();
+        } finally {
+            quiet -= 1;
+        }
+    }
+
+    window.Loading = { show: start, hide: stop, quietly };
 })();
