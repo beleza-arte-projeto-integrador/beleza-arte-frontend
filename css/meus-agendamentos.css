@@ -123,16 +123,24 @@ body {
 
 .acoes-profissional {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.botoes-profissional {
+    display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 30px;
     flex-wrap: wrap;
 }
 
 .botao-editar-profissional {
     height: 45px;
     padding: 0 20px;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -153,15 +161,67 @@ body {
     color: var(--dourado);
 }
 
+.contato-whatsapp-qr {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 420px;
+    padding: 14px 18px 14px 14px;
+    border: 1px solid #1f9e4f;
+    border-radius: 10px;
+    background: white;
+    color: var(--preto);
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
+    transition: .3s;
+}
+
+.contato-whatsapp-qr:hover,
+.contato-whatsapp-qr:focus-visible {
+    box-shadow: 0 12px 32px rgba(31, 158, 79, .2);
+}
+
+.qrcode-whatsapp {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+}
+
+.qrcode-whatsapp img,
+.qrcode-whatsapp canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.texto-whatsapp-qr strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1f9e4f;
+    font-size: 12px;
+    letter-spacing: .5px;
+}
+
+.texto-whatsapp-qr span {
+    display: block;
+    margin-top: 8px;
+    color: var(--cinza);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
 .botao-excluir-profissional {
     height: 45px;
-    padding: 0 18px;
+    padding: 0 20px;
     border: 1px solid var(--vermelho);
     background: transparent;
     color: var(--vermelho);
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: .5px;
     transition: .3s;
 }
 
@@ -521,12 +581,22 @@ body {
 
     .acoes-profissional {
         flex-direction: column;
+        align-items: stretch;
         justify-content: center;
+    }
+
+    .botoes-profissional {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .botao-editar-profissional,
     .botao-excluir-profissional {
         width: 100%;
+    }
+
+    .contato-whatsapp-qr {
+        max-width: none;
     }
 
     .card-agendamento {

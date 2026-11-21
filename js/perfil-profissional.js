@@ -1,3 +1,12 @@
+// Edição do cadastro pela própria profissional logada (PUT /updateProfessionals).
+// Requer service-api.js, professional-api.js e auth-profissional.js.
+//
+// Cuidados com o backend:
+// - O CPF vem mascarado (***.000.000-**) e não pode ser alterado aqui. Ele é reenviado
+//   exatamente como veio: o backend mantém o CPF original. NÃO omitir o campo, pois
+//   sem ele o backend apaga o CPF.
+// - A senha não é editada aqui (o backend ainda não tem endpoint de login) e
+//   nunca é enviada na atualização.
 document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("formPerfilProfissional");
     const nome = document.getElementById("nome");
@@ -7,32 +16,55 @@ document.addEventListener("DOMContentLoaded", async () => {
     const especialidade = document.getElementById("especialidade");
     const experiencia = document.getElementById("experiencia");
     const usuario = document.getElementById("usuario");
-    const senha = document.getElementById("senha");
-    const confirmarSenha = document.getElementById("confirmarSenha");
     const mensagem = document.getElementById("mensagemPerfil");
-    const servicos = document.querySelectorAll('input[name="servicos"]');
-    const profissionalAtual = JSON.parse(localStorage.getItem("belezaArteProfissionalAtual"));
+    const botaoSalvar = form.querySelector("button[type=submit]");
 
-    if (!profissionalAtual) {
-        alert("Você precisa estar logada para acessar seu perfil.");
-        window.location.href = "login-profissional.html";
-        return;
+    function mostrarMensagem(texto, tipo) {
+        mensagem.className = `mensagem ${tipo}-mensagem`;
+        mensagem.textContent = texto;
+    }
+
+    let profissionalAtual = null;
+    try {
+        profissionalAtual = JSON.parse(localStorage.getItem("belezaArteProfissionalAtual"));
+    } catch {
+        profissionalAtual = null;
+    }
+    // Sem login, auth-profissional.js já redireciona para a tela de login.
+    if (!profissionalAtual) return;
+
+    botaoSalvar.disabled = true;
+
+    function adicionarEspecialidade(valor) {
+        if (!valor || [...especialidade.options].some(option => option.value === valor)) return;
+        especialidade.add(new Option(valor, valor));
+    }
+
+    // Especialidades = nomes dos serviços cadastrados no backend (mesma regra do cadastro).
+    async function carregarEspecialidades() {
+        try {
+            const nomes = await professionalApi.specialties();
+            especialidade.options[0].textContent = nomes.length ? "Selecione sua especialidade" : "Nenhum serviço cadastrado";
+            nomes.forEach(adicionarEspecialidade);
+        } catch {
+            especialidade.options[0].textContent = "Selecione sua especialidade";
+        }
     }
 
     let profissional;
     try {
-        const profissionais = await professionalApi.list();
-        profissional = profissionais.find(item => String(item.id) === String(profissionalAtual.id));
+        [profissional] = await Promise.all([
+            professionalApi.findById(profissionalAtual.id),
+            carregarEspecialidades()
+        ]);
     } catch (error) {
-        mensagem.className = "mensagem erro-mensagem";
-        mensagem.textContent = error.message || "Não foi possível carregar seu cadastro.";
+        mostrarMensagem(error.message || "Não foi possível carregar seu cadastro.", "erro");
         return;
     }
 
+    // Cadastro excluído ou inativo: auth-profissional.js desloga e redireciona.
     if (!profissional) {
-        alert("Não foi possível localizar seu cadastro.");
-        localStorage.removeItem("belezaArteProfissionalAtual");
-        window.location.href = "login-profissional.html";
+        mostrarMensagem("Não foi possível localizar seu cadastro.", "erro");
         return;
     }
 
@@ -40,73 +72,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     cpf.value = profissional.cpf || "";
     telefone.value = profissional.phone || "";
     email.value = profissional.email || "";
+    adicionarEspecialidade(profissional.specialty); // mantém especialidades antigas fora da lista
     especialidade.value = profissional.specialty || "";
-    experiencia.value = experienceLabel(profissional.experienceYears);
+    experiencia.value = profissional.experienceYears ?? "";
     usuario.value = profissional.username || "";
-
-    function experienceLabel(value) {
-        const years = Number(value);
-        if (years < 1) return "Menos de 1 ano";
-        if (years <= 3) return "1 a 3 anos";
-        if (years <= 7) return "4 a 7 anos";
-        if (years <= 10) return "8 a 10 anos";
-        return "Mais de 10 anos";
-    }
-
-    function experienceYears(value) {
-        const text = String(value).toLowerCase();
-        if (text.includes("menos")) return 0;
-        if (text.includes("mais")) return 11;
-        return Number(text.match(/\d+/)?.[0] || 0);
-    }
-
-    const servicosSalvos = [];
-
-    servicos.forEach(servico => {
-        servico.checked = servicosSalvos.includes(servico.value);
-    });
-
-    function atualizarServicos() {
-        const especialidadeSelecionada = especialidade.value;
-
-        servicos.forEach(servico => {
-            const permitidos = servico.dataset.especialidades ? servico.dataset.especialidades.split(",").map(item => item.trim()) : [];
-            const label = servico.closest(".checkbox");
-
-            if (!especialidadeSelecionada) {
-                label.style.display = "none";
-                servico.disabled = true;
-                return;
-            }
-
-            if (permitidos.includes(especialidadeSelecionada)) {
-                label.style.display = "flex";
-                servico.disabled = false;
-            } else {
-                label.style.display = "none";
-                servico.checked = false;
-                servico.disabled = true;
-            }
-        });
-    }
-
-    especialidade.addEventListener("change", atualizarServicos);
-
-    atualizarServicos();
+    botaoSalvar.disabled = false;
 
     function somenteNumeros(valor) {
         return valor.replace(/\D/g, "");
     }
-
-    cpf.addEventListener("input", () => {
-        let valor = somenteNumeros(cpf.value).slice(0, 11);
-
-        valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-        valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-        valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-
-        cpf.value = valor;
-    });
 
     telefone.addEventListener("input", () => {
         let valor = somenteNumeros(telefone.value).slice(0, 11);
@@ -126,41 +100,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         usuario.value = usuario.value.toLowerCase().replace(/[^a-z0-9._-]/g, "").slice(0, 30);
     });
 
-    document.querySelectorAll(".mostrar-senha").forEach(botao => {
-        botao.addEventListener("click", () => {
-            const id = botao.dataset.target;
-            const campo = document.getElementById(id);
-
-            if (campo.type === "password") {
-                campo.type = "text";
-                botao.textContent = "🙈";
-            } else {
-                campo.type = "password";
-                botao.textContent = "👁";
-            }
-        });
-    });
-
     function mostrarErro(campo, idErro, texto) {
         campo.classList.add("invalido");
         campo.classList.remove("valido");
-
         document.getElementById(idErro).textContent = texto;
     }
 
     function limparErro(campo, idErro) {
         campo.classList.remove("invalido");
         campo.classList.add("valido");
-
         document.getElementById(idErro).textContent = "";
     }
 
-    form.addEventListener("submit", async event => {
-        event.preventDefault();
-        let valido = true;
+    function anosDeExperiencia() {
+        const texto = String(experiencia.value).trim();
+        return /^\d+$/.test(texto) ? Number(texto) : null;
+    }
 
-        mensagem.className = "mensagem";
-        mensagem.textContent = "";
+    function validar() {
+        let valido = true;
 
         if (nome.value.trim().length < 5) {
             mostrarErro(nome, "erro-nome", "Digite seu nome completo.");
@@ -169,25 +127,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             limparErro(nome, "erro-nome");
         }
 
-        const cpfNumeros = somenteNumeros(cpf.value);
-
-        if (cpfNumeros.length !== 11) {
-            mostrarErro(cpf, "erro-cpf", "Digite um CPF válido.");
-            valido = false;
-        } else {
-            limparErro(cpf, "erro-cpf");
-        }
-
-        const telefoneNumeros = somenteNumeros(telefone.value);
-
-        if (telefoneNumeros.length < 10) {
+        if (somenteNumeros(telefone.value).length < 10) {
             mostrarErro(telefone, "erro-telefone", "Digite um telefone válido.");
             valido = false;
         } else {
             limparErro(telefone, "erro-telefone");
         }
 
-        if (!email.checkValidity()) {
+        if (!email.value.trim() || !email.checkValidity()) {
             mostrarErro(email, "erro-email", "Digite um e-mail válido.");
             valido = false;
         } else {
@@ -201,87 +148,61 @@ document.addEventListener("DOMContentLoaded", async () => {
             limparErro(especialidade, "erro-especialidade");
         }
 
-        if (!experiencia.value) {
-            mostrarErro(experiencia, "erro-experiencia", "Selecione seu tempo de experiência.");
+        const anos = anosDeExperiencia();
+        if (anos === null || anos > 80) {
+            mostrarErro(experiencia, "erro-experiencia", "Informe os anos de experiência (número inteiro de 0 a 80).");
             valido = false;
         } else {
             limparErro(experiencia, "erro-experiencia");
         }
 
-        const servicosSelecionados = document.querySelectorAll('input[name="servicos"]:checked');
-
-        if (servicosSelecionados.length === 0) {
-            document.getElementById("erro-servicos").textContent = "Selecione pelo menos um serviço.";
-            valido = false;
-        } else {
-            document.getElementById("erro-servicos").textContent = "";
-        }
-
-        const regexUsuario = /^[a-z0-9._-]{4,30}$/;
-
-        if (!regexUsuario.test(usuario.value)) {
+        if (!/^[a-z0-9._-]{4,30}$/.test(usuario.value)) {
             mostrarErro(usuario, "erro-usuario", "O usuário deve ter de 4 a 30 caracteres.");
             valido = false;
         } else {
             limparErro(usuario, "erro-usuario");
         }
 
-        if (senha.value) {
-            const senhaValida = senha.value.length >= 8 && /[A-Z]/.test(senha.value) && /[a-z]/.test(senha.value) && /[0-9]/.test(senha.value);
+        return valido;
+    }
 
-            if (!senhaValida) {
-                mostrarErro(senha, "erro-senha", "A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula e um número.");
-                valido = false;
-            } else {
-                limparErro(senha, "erro-senha");
-            }
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        mostrarMensagem("", "");
+        mensagem.className = "mensagem";
 
-            if (confirmarSenha.value !== senha.value) {
-                mostrarErro(confirmarSenha, "erro-confirmarSenha", "As senhas não são iguais.");
-                valido = false;
-            } else {
-                limparErro(confirmarSenha, "erro-confirmarSenha");
-            }
-        } else {
-            document.getElementById("erro-senha").textContent = "";
-            document.getElementById("erro-confirmarSenha").textContent = "";
-        }
-
-        if (!valido) {
-            mensagem.className = "mensagem erro-mensagem";
-            mensagem.textContent = "Corrija os campos destacados antes de continuar.";
-
-            const primeiroErro = document.querySelector(".invalido");
-
-            if (primeiroErro) {
-                primeiroErro.focus();
-            }
-
+        if (!validar()) {
+            mostrarMensagem("Corrija os campos destacados antes de continuar.", "erro");
+            document.querySelector(".invalido")?.focus();
             return;
         }
 
+        const { password, senha: _senha, created, updated, ...dadosAtuais } = profissional;
         const profissionalAtualizada = {
-            ...profissional,
+            ...dadosAtuais,
+            cpf: profissional.cpf, // reenviado como veio da API (ver comentário no topo)
             name: nome.value.trim(),
-            cpf: cpf.value,
-            phone: telefone.value,
+            phone: telefone.value.trim(),
             email: email.value.trim(),
             specialty: especialidade.value,
-            experienceYears: experienceYears(experiencia.value),
-            username: usuario.value.trim()
+            experienceYears: anosDeExperiencia(),
+            username: usuario.value.trim(),
+            active: profissional.active ?? true
         };
-        if (senha.value) profissionalAtualizada.password = senha.value;
 
+        botaoSalvar.disabled = true;
+        let salvou = false;
         try {
             const resposta = await professionalApi.update(profissionalAtualizada);
             const segura = professionalApi.withoutPassword(resposta?.data || resposta || profissionalAtualizada);
             localStorage.setItem("belezaArteProfissionalAtual", JSON.stringify(segura));
-            mensagem.className = "mensagem sucesso-mensagem";
-            mensagem.textContent = "✓ Dados atualizados com sucesso!";
+            salvou = true;
+            mostrarMensagem("✓ Dados atualizados com sucesso!", "sucesso");
             setTimeout(() => { window.location.href = "meus-agendamentos.html"; }, 1000);
         } catch (error) {
-            mensagem.className = "mensagem erro-mensagem";
-            mensagem.textContent = error.message || "Não foi possível atualizar seus dados.";
+            mostrarMensagem(error.message || "Não foi possível atualizar seus dados.", "erro");
+        } finally {
+            if (!salvou) botaoSalvar.disabled = false;
         }
     });
 });

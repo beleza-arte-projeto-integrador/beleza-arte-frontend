@@ -3,7 +3,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const dadosProfissional = document.getElementById("dados-profissional");
     const listaAgendamentos = document.getElementById("lista-agendamentos");
-    const botaoExcluirProfissional = document.getElementById("botao-excluir-profissional");
     const api = window.appointmentApi;
     const { STATUS } = api;
     const { formatDate, formatTime } = api.time;
@@ -243,28 +242,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const botao = event.target.closest("button[data-acao]");
         if (botao) executarAcao(botao);
     });
-
-    if (botaoExcluirProfissional) {
-        botaoExcluirProfissional.addEventListener("click", async () => {
-            const confirmar = confirm("Tem certeza que deseja excluir seu cadastro?\n\n" + "Essa ação removerá sua profissional da plataforma.");
-
-            if (!confirmar) {
-                return;
-            }
-
-            botaoExcluirProfissional.disabled = true;
-            try {
-                await professionalApi.remove(profissionalAtual.id);
-            } catch (erro) {
-                botaoExcluirProfissional.disabled = false;
-                alert(erro.message || "Não foi possível excluir seu cadastro.");
-                return;
-            }
-            localStorage.removeItem("belezaArteProfissionalAtual");
-            alert("Profissional excluída com sucesso!");
-            window.location.href = "index.html";
-        });
-    }
 
     carregarAgendamentos();
 });

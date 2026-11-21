@@ -134,6 +134,19 @@
         return [...professionals.values()];
     }
 
+    // O backend não tem busca por usuário nem por id: procura na listagem completa.
+    async function findByUsername(username) {
+        const wanted = String(username || "").trim().toLowerCase();
+        if (!wanted) return null;
+        const professionals = await list();
+        return professionals.find(item => String(item.username || "").trim().toLowerCase() === wanted) || null;
+    }
+
+    async function findById(id) {
+        const professionals = await list();
+        return professionals.find(item => String(item.id) === String(id)) || null;
+    }
+
     function search(type, value) {
         const endpoint = searchEndpoints[type];
         if (!endpoint) throw new Error("Tipo de busca de profissional inválido.");
@@ -194,5 +207,5 @@
         });
     }
 
-    window.professionalApi = { list, search, create, update, remove, withoutPassword, specialties, specialtyGroups, searchableSpecialties };
+    window.professionalApi = { list, search, findByUsername, findById, create, update, remove, withoutPassword, specialties, specialtyGroups, searchableSpecialties };
 })();

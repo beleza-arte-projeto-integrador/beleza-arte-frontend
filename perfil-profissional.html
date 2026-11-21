@@ -109,14 +109,13 @@
                             id="cpf"
                             name="cpf"
                             maxlength="14"
-                            placeholder="000.000.000-00"
-                            required
+                            readonly
+                            aria-describedby="dica-cpf"
                         >
 
-                        <small
-                            class="erro"
-                            id="erro-cpf"
-                        ></small>
+                        <small class="dica" id="dica-cpf">
+                            Por segurança, o CPF não pode ser alterado aqui. Fale com a administração.
+                        </small>
                     </div>
 
                     <div class="campo">
@@ -168,8 +167,8 @@
                         </h2>
 
                         <p>
-                            Atualize sua especialidade,
-                            experiência e serviços.
+                            Atualize sua especialidade
+                            e tempo de experiência.
                         </p>
                     </div>
                 </div>
@@ -186,29 +185,13 @@
                             required
                         >
                             <option value="">
-                                Selecione sua especialidade
-                            </option>
-
-                            <option value="Cabeleireira">
-                                Cabeleireira
-                            </option>
-
-                            <option value="Manicure">
-                                Manicure
-                            </option>
-
-                            <option value="Esteticista">
-                                Esteticista
-                            </option>
-
-                            <option value="Maquiadora">
-                                Maquiadora
-                            </option>
-
-                            <option value="Designer de Sobrancelhas">
-                                Designer de Sobrancelhas
+                                Carregando especialidades...
                             </option>
                         </select>
+
+                        <small class="dica">
+                            As opções são os serviços cadastrados no salão.
+                        </small>
 
                         <small
                             class="erro"
@@ -218,279 +201,26 @@
 
                     <div class="campo campo-grande">
                         <label for="experiencia">
-                            Tempo de experiência
+                            Anos de experiência
                         </label>
 
-                        <select
+                        <input
+                            type="number"
                             id="experiencia"
                             name="experiencia"
+                            placeholder="Ex.: 3"
+                            min="0"
+                            max="80"
+                            step="1"
+                            inputmode="numeric"
                             required
                         >
-                            <option value="">
-                                Selecione
-                            </option>
-
-                            <option value="Menos de 1 ano">
-                                Menos de 1 ano
-                            </option>
-
-                            <option value="1 a 3 anos">
-                                1 a 3 anos
-                            </option>
-
-                            <option value="4 a 7 anos">
-                                4 a 7 anos
-                            </option>
-
-                            <option value="8 a 10 anos">
-                                8 a 10 anos
-                            </option>
-
-                            <option value="Mais de 10 anos">
-                                Mais de 10 anos
-                            </option>
-                        </select>
 
                         <small
                             class="erro"
                             id="erro-experiencia"
                         ></small>
                     </div>
-                </div>
-
-                <div class="campo">
-                    <label class="titulo-servicos">
-                        Serviços realizados
-                        <span>Selecione os serviços que você oferece</span>
-                    </label>
-
-                    <div class="servicos">
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Corte"
-                                data-especialidades="Cabeleireira"
-                            >
-
-                            <span>
-                                Corte
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Coloração"
-                                data-especialidades="Cabeleireira"
-                            >
-
-                            <span>
-                                Coloração
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Mechas"
-                                data-especialidades="Cabeleireira"
-                            >
-
-                            <span>
-                                Mechas
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Escova"
-                                data-especialidades="Cabeleireira"
-                            >
-
-                            <span>
-                                Escova
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Penteados"
-                                data-especialidades="Cabeleireira,Maquiadora"
-                            >
-
-                            <span>
-                                Penteados
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Tratamentos"
-                                data-especialidades="Cabeleireira"
-                            >
-
-                            <span>
-                                Tratamentos
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Manicure"
-                                data-especialidades="Manicure"
-                            >
-
-                            <span>
-                                Manicure
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Pedicure"
-                                data-especialidades="Manicure"
-                            >
-
-                            <span>
-                                Pedicure
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Unhas de gel"
-                                data-especialidades="Manicure"
-                            >
-
-                            <span>
-                                Unhas de gel
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Limpeza de pele"
-                                data-especialidades="Esteticista"
-                            >
-
-                            <span>
-                                Limpeza de pele
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Controle de acne"
-                                data-especialidades="Esteticista"
-                            >
-
-                            <span>
-                                Controle de acne
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Revitalização dos fios do couro cabeludo"
-                                data-especialidades="Esteticista"
-                            >
-
-                            <span>
-                                Revitalização dos fios do couro cabeludo
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Hidratação"
-                                data-especialidades="Esteticista"
-                            >
-
-                            <span>
-                                Hidratação
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Peeling"
-                                data-especialidades="Esteticista"
-                            >
-
-                            <span>
-                                Peeling
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Maquiagem"
-                                data-especialidades="Maquiadora"
-                            >
-
-                            <span>
-                                Maquiagem
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Design de sobrancelhas"
-                                data-especialidades="Designer de Sobrancelhas"
-                            >
-
-                            <span>
-                                Design de sobrancelhas
-                            </span>
-                        </label>
-
-                        <label class="checkbox">
-                            <input
-                                type="checkbox"
-                                name="servicos"
-                                value="Depilação"
-                                data-especialidades="Esteticista"
-                            >
-
-                            <span>
-                                Depilação
-                            </span>
-                        </label>
-                    </div>
-
-                    <small
-                        class="erro"
-                        id="erro-servicos"
-                    ></small>
                 </div>
 
                 <div class="titulo-secao">
@@ -502,7 +232,7 @@
                         </h2>
 
                         <p>
-                            Altere seu usuário e senha.
+                            Altere seu nome de usuário.
                         </p>
                     </div>
                 </div>
@@ -529,66 +259,6 @@
                         <small
                             class="erro"
                             id="erro-usuario"
-                        ></small>
-                    </div>
-                </div>
-
-                <div class="grid">
-                    <div class="campo">
-                        <label for="senha">
-                            Nova senha
-                        </label>
-
-                        <div class="campo-senha">
-                            <input
-                                type="password"
-                                id="senha"
-                                placeholder="Digite uma nova senha"
-                            >
-
-                            <button
-                                type="button"
-                                class="mostrar-senha"
-                                data-target="senha"
-                            >
-                                👁
-                            </button>
-                        </div>
-
-                        <small class="dica">
-                            Deixe vazio se não quiser alterar a senha.
-                        </small>
-
-                        <small
-                            class="erro"
-                            id="erro-senha"
-                        ></small>
-                    </div>
-
-                    <div class="campo">
-                        <label for="confirmarSenha">
-                            Confirmar nova senha
-                        </label>
-
-                        <div class="campo-senha">
-                            <input
-                                type="password"
-                                id="confirmarSenha"
-                                placeholder="Digite a senha novamente"
-                            >
-
-                            <button
-                                type="button"
-                                class="mostrar-senha"
-                                data-target="confirmarSenha"
-                            >
-                                👁
-                            </button>
-                        </div>
-
-                        <small
-                            class="erro"
-                            id="erro-confirmarSenha"
                         ></small>
                     </div>
                 </div>
@@ -633,6 +303,7 @@
 
     <script src="js/api/service-api.js"></script>
     <script src="js/api/professional-api.js"></script>
+    <script src="js/auth-profissional.js"></script>
     <script src="js/perfil-profissional.js"></script>
 </body>
 
