@@ -6,6 +6,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const booking = window.bookingService;
     const { formatDate, formatTime } = window.appointmentApi.time;
+    const avisar = (texto, titulo = "Falta uma informação") => window.avisoModal.mostrar({ tipo: "aviso", titulo, texto });
 
     const paineis = document.querySelectorAll(".etapa-agendamento[data-painel]");
     const etapas = document.querySelectorAll(".etapas .etapa");
@@ -286,20 +287,31 @@ document.addEventListener("DOMContentLoaded", () => {
         if (numero === 4) preencherClienteLembrado();
         if (numero === 5) montarConfirmacao();
         atualizarResumo();
+        levarAoTopoDasEtapas();
+    }
+
+    /** Ao trocar de etapa, se a pessoa rolou para baixo, volta a tela para o começo das etapas. */
+    function levarAoTopoDasEtapas() {
+        const alvo = document.querySelector(".etapas");
+        if (!alvo) return;
+        const alturaCabecalho = document.querySelector("header")?.offsetHeight || 0;
+        const topo = alvo.getBoundingClientRect().top;
+        if (topo >= alturaCabecalho) return; // o começo já está visível
+        window.scrollTo({ top: window.scrollY + topo - alturaCabecalho - 12, behavior: "smooth" });
     }
 
     async function validarEtapa(numero) {
         const selecionadas = escolhasOrdenadas();
 
         if (numero === 1 && !selecionadas.length) {
-            alert("Escolha pelo menos um serviço para continuar.");
+            await avisar("Escolha pelo menos um serviço para continuar.");
             return false;
         }
 
         if (numero === 2) {
             const semProfissional = selecionadas.find(escolha => !escolha.professional);
             if (semProfissional) {
-                alert(`Escolha uma profissional para o serviço "${semProfissional.service.name}".`);
+                await avisar(`Escolha uma profissional para o serviço "${semProfissional.service.name}".`);
                 return false;
             }
         }
@@ -307,13 +319,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (numero === 3) {
             const incompleta = selecionadas.find(escolha => !escolha.date || !escolha.time);
             if (incompleta) {
-                alert(`Escolha ${incompleta.date ? "um horário" : "uma data"} para "${incompleta.service.name}".`);
+                await avisar(`Escolha ${incompleta.date ? "um horário" : "uma data"} para "${incompleta.service.name}".`);
                 return false;
             }
             try {
                 await booking.checkAvailability(selecionadas);
             } catch (erro) {
-                alert(erro.message);
+                await avisar(erro.message, "Horário indisponível");
                 criarAgendaPorServico(); // recarrega os horários atualizados
                 return false;
             }
@@ -321,18 +333,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (numero === 4) {
             if (!nomeInput.value.trim()) {
-                alert("Digite seu nome completo.");
+                await avisar("Digite seu nome completo.");
                 nomeInput.focus();
                 return false;
             }
             const digitos = booking.normalizePhone(telefoneInput.value);
             if (digitos.length < 10) {
-                alert("Digite um telefone válido com DDD.");
+                await avisar("Digite um telefone válido com DDD.");
                 telefoneInput.focus();
                 return false;
             }
             if (!emailInput.value.trim() || !emailInput.checkValidity()) {
-                alert("Digite um e-mail válido.");
+                await avisar("Digite um e-mail válido.");
                 emailInput.focus();
                 return false;
             }
@@ -419,16 +431,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 choices: escolhasOrdenadas()
             });
         } catch (erro) {
-            alert(`❌ ${erro.message}`);
+            await window.avisoModal.mostrar({ tipo: "erro", titulo: "Não foi possível agendar", texto: erro.message });
             if (erro.choice) mostrarEtapa(3);
             return;
         } finally {
             botaoConfirmar.disabled = false;
         }
 
-        alert("✅ AGENDAMENTO REALIZADO COM SUCESSO!\n\nSeu horário já está disponível em MEUS AGENDAMENTOS.");
         reiniciarReserva();
         await carregarMeusAgendamentos();
+        await window.avisoModal.mostrar({
+            tipo: "sucesso",
+            titulo: "Agendamento realizado!",
+            texto: "Seu horário já está disponível em Meus agendamentos.",
+            botao: "VER MEUS AGENDAMENTOS"
+        });
         document.getElementById("meus-agendamentos")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
@@ -503,16 +520,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function cancelarAgendamento(agendamento) {
-        if (!confirm(`Tem certeza que deseja cancelar o agendamento #${agendamento.id}?`)) return;
-        const motivo = prompt("Se quiser, conte o motivo do cancelamento (opcional):", "");
-        if (motivo === null) return;
+        const { confirmado, valor: motivo } = await window.avisoModal.confirmar({
+            titulo: "Cancelar agendamento?",
+            texto: `Tem certeza que deseja cancelar o agendamento #${agendamento.id}?`,
+            campo: { rotulo: "Se quiser, conte o motivo (opcional)", placeholder: "Ex.: imprevisto no trabalho" },
+            confirmar: "SIM, CANCELAR",
+            cancelar: "VOLTAR"
+        });
+        if (!confirmado) return;
         try {
             await booking.cancel(agendamento.id, motivo);
         } catch (erro) {
-            alert(`❌ Não foi possível cancelar: ${erro.message}`);
+            await window.avisoModal.mostrar({ tipo: "erro", titulo: "Não foi possível cancelar", texto: erro.message });
             return;
         }
-        alert("✅ CANCELAMENTO REALIZADO!\n\nO salão foi avisado sobre o cancelamento.");
+        await window.avisoModal.mostrar({ tipo: "sucesso", titulo: "Cancelamento realizado", texto: "O salão foi avisado sobre o cancelamento." });
         carregarMeusAgendamentos();
     }
 

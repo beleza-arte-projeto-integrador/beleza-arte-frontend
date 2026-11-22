@@ -102,7 +102,8 @@
         return request(`/${endpoint[0]}?${endpoint[1]}=${encodeURIComponent(value)}`)
             .then(normalizeList)
             .catch(error => {
-                if (error.status === 404) return [];
+                // O backend responde "nenhum cliente encontrado" com 422 ("Could not find client").
+                if (error.status === 404 || (error.status === 422 && /could not find client/i.test(error.message))) return [];
                 throw error;
             });
     }
