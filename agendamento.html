@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendamento | Beleza & Arte</title>
     <link rel="stylesheet" href="css/agendamento.css">
+    <script src="js/loading.js"></script>
 </head>
 
 <body>
@@ -108,118 +109,7 @@
                             <p>Selecione um ou mais serviços para continuar.</p>
                         </div>
 
-                        <div class="lista-servico">
-                            <label class="opcao-servico">
-                                <input type="checkbox" name="servico" value="Corte"
-                                    data-preco="50">
-                                <span class="radio"></span>
-                                <img src="images/servicos/servicos-corte.png" alt="Corte">
-
-                                <span class="informacao-servico">
-                                    <strong>Corte de cabelo</strong>
-                                    <small>
-                                        corte de cabelo.
-                                    </small>
-                                </span>
-
-                                <span class="preco">R$ 50,00</span>
-                            </label>
-
-                            <label class="opcao-servico">
-                                <input type="checkbox" name="servico" value="Depilacao"
-                                    data-preco="120">
-                                <span class="radio"></span>
-                                <img src="images/profissionais/depilacao.png" alt="Depilacao">
-
-                                <span class="informacao-servico">
-                                    <strong>Depilação</strong>
-                                    <small>
-                                        depile agora! sua peluda!.
-                                    </small>
-                                </span>
-
-                                <span class="preco">R$ 120,00</span>
-                            </label>
-
-                            <label class="opcao-servico">
-                                <input type="checkbox" name="servico" value="Mechas / Coloração"
-                                    data-preco="250">
-                                <span class="radio"></span>
-                                <img src="images/profissionais/mechas-coloracao.png" alt="Mechas e coloração">
-
-                                <span class="informacao-servico">
-                                    <strong>MECHAS / COLORAÇÃO</strong>
-                                    <small>
-                                        Transforme seu visual com mechas, coloração e tonalizantes.
-                                    </small>
-                                </span>
-
-                                <span class="preco">R$ 250,00</span>
-                            </label>
-
-                            <label class="opcao-servico">
-                                <input type="checkbox" name="servico" value="Manicure" data-preco="60">
-                                <span class="radio"></span>
-                                <img src="images/profissionais/manicure.png" alt="Manicure">
-
-                                <span class="informacao-servico">
-                                    <strong>Manicure</strong>
-                                    <small>
-                                        Cuidados completos para unhas lindas e bem cuidadas.
-                                    </small>
-                                </span>
-
-                                <span class="preco">R$ 60,00</span>
-                            </label>
-
-                            <label class="opcao-servico">
-                                <input type="checkbox" name="servico" value="Escova / Tratamentos"
-                                    data-preco="120">
-                                <span class="radio"></span>
-                                <img src="images/profissionais/escova-tratamentos.png" alt="Escova / Tratamentos">
-
-                                <span class="informacao-servico">
-                                    <strong>Escova / Tratamentos</strong>
-                                    <small>
-                                        Escova perfeita e tratamentos para todos os tipos de cabelo.
-                                    </small>
-                                </span>
-
-                                <span class="preco">R$ 120,00</span>
-                            </label>
-
-                            <label class="opcao-servico">
-                                <input type="checkbox" name="servico" value="Limpeza de pele"
-                                    data-preco="150">
-                                <span class="radio"></span>
-                                <img src="images/profissionais/limpeza-pele.png" alt="Limpeza de pele">
-
-                                <span class="informacao-servico">
-                                    <strong>Limpeza de pele</strong>
-                                    <small>
-                                        Limpeza de pele, hidratação e cuidados faciais.
-                                    </small>
-                                </span>
-
-                                <span class="preco">R$ 150,00</span>
-                            </label>
-
-                            <label class="opcao-servico">
-                                <input type="checkbox" name="servico" value="Maquiagem"
-                                    data-preco="200">
-                                <span class="radio"></span>
-                                <img src="images/profissionais/maquiagem.png" alt="Maquiagem">
-
-                                <span class="informacao-servico">
-                                    <strong>Maquiagem</strong>
-                                    <small>
-                                        Maquiagens para o dia a dia, eventos e ocasiões especiais.
-                                    </small>
-                                </span>
-
-                                <span class="preco">R$ 200,00</span>
-                            </label>
-                        </div>
+                        <div class="lista-servico" id="lista-servicos"></div>
 
                         <button class="botao-proximo" type="button" data-proximo="2">
                             <span>PRÓXIMO PASSO</span>
@@ -420,12 +310,6 @@
                     </div>
                 </div>
 
-                <div class="acoes-meus-agendamentos">
-                    <button type="button" id="botao-excluir-todos-agendamentos" class="botao-excluir-todos-agendamentos">
-                        🗑 EXCLUIR TODOS OS MEUS AGENDAMENTOS
-                    </button>
-                </div>
-
                 <div id="lista-meus-agendamentos" class="lista-meus-agendamentos"></div>
             </div>
         </section>
@@ -482,9 +366,13 @@
         <div class="container copyright"> © 2026 Todos os direitos reservados.</div>
     </footer>
 
+    <script src="js/api/appointment-api.js"></script>
+    <script src="js/api/appointments-items-api.js"></script>
+    <script src="js/api/client-api.js"></script>
+    <script src="js/api/service-api.js"></script>
+    <script src="js/api/professional-api.js"></script>
+    <script src="js/api/resource-api.js"></script>
+    <script src="js/booking/booking-service.js"></script>
     <script src="js/agendamento.js"></script>
-    <script src="js/cancelamentos.js"></script>
-    <script src="js/notificacao-desistencia.js"></script>
-    <script src="js/historico-cancelamentos.js"></script>
 </body>
 </html>

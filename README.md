@@ -30,6 +30,10 @@ A camada de comunicação fica em [js/api/](./js/api/). Cada módulo deve manter
 
 O módulo de itens de agendamento está disponível em [js/api/appointments-items-api.js](./js/api/appointments-items-api.js), com tela de gerenciamento em [itens-agendamento-admin.html](./itens-agendamento-admin.html).
 
+O agendamento feito pelo cliente ([agendamento.html](./agendamento.html)) usa as mesmas rotas do admin. A tela ([js/agendamento.js](./js/agendamento.js)) só cuida da interface; as regras (horários livres, escolha do recurso, cadastro do cliente pelo telefone, gravação e cancelamento) ficam em [js/booking/booking-service.js](./js/booking/booking-service.js). Como o backend não tem uma rota pública de agendamento, existem limitações conhecidas, descritas no topo desse arquivo: a verificação de conflito é feita no navegador, a gravação usa várias chamadas (com desfazer em caso de falha), o recurso é escolhido automaticamente e o cliente é lembrado apenas no navegador em que agendou.
+
+O módulo de pagamentos está disponível em [js/api/payment-api.js](./js/api/payment-api.js) (tipos em [js/types/payment-types.js](./js/types/payment-types.js)), com tela em [pagamentos-admin.html](./pagamentos-admin.html). A tela mostra as métricas do mês, o faturamento por período, a lista de pagamentos com filtro por status, permite registrar o pagamento dos pendentes e exportar as linhas exibidas em CSV. Os pagamentos são criados, recalculados e cancelados pelo backend a partir dos itens e do status do agendamento; o frontend apenas consulta e registra o recebimento.
+
 ## Pré-requisitos
 
 - Node.js instalado.

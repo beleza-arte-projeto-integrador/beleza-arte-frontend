@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/painel-admin.css">
     <link rel="stylesheet" href="css/servicos-admin.css">
     <link rel="stylesheet" href="css/itens-agendamento-admin.css">
+    <script src="js/loading.js"></script>
 </head>
 <body>
     <header class="admin-header">
@@ -20,12 +21,13 @@
             <a href="profissionais-admin.html"><span>♙</span> Profissionais</a>
             <a href="servicos-admin.html"><span>✦</span> Serviços</a>
             <a href="resources-admin.html"><span>▣</span> Recursos</a>
+            <a href="clients-admin.html"><span>♙</span> Clientes</a>
             <a class="active" href="itens-agendamento-admin.html"><span>◷</span> Itens de agendamento</a>
             <a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a>
             <a href="pagamentos-admin.html"><span>R$</span> Pagamentos</a>
-            <a href="relatorios-admin.html"><span>▥</span> Relatórios</a>
+
             <p class="menu-label">ATALHOS</p>
-            <a href="agendamento.html"><span>＋</span> Novo agendamento</a>
+            <a href="remarcacao-admin.html#novo"><span>＋</span> Novo agendamento</a>
             <a href="index.html"><span>←</span> Voltar ao site</a>
         </aside>
         <main class="admin-main">
@@ -36,9 +38,9 @@
 
             <section class="appointments-toolbar">
                 <select id="search-type" aria-label="Tipo de busca">
-                    <option value="start">Data de início</option>
-                    <option value="end">Data de término</option>
-                    <option value="price">Preço</option>
+                    <option value="start">Data de início (exata)</option>
+                    <option value="end">Data de término (exata)</option>
+                    <option value="price">Preço (exato)</option>
                 </select>
                 <input id="search-value" type="datetime-local" aria-label="Valor da busca">
                 <button class="outline-button" id="search-items" type="button">BUSCAR</button>
@@ -50,13 +52,13 @@
                 <form id="item-form" novalidate>
                     <input id="item-id" type="hidden">
                     <div class="item-form-grid">
-                        <label class="admin-field">Agendamento<input id="appointment-id" type="number" min="1" step="1" required><small class="erro" data-error-for="appointment_id"></small></label>
-                        <label class="admin-field">Serviço<input id="service-id" type="number" min="1" step="1" required><small class="erro" data-error-for="service_id"></small></label>
-                        <label class="admin-field">Profissional<input id="professional-id" type="number" min="1" step="1" required><small class="erro" data-error-for="professional_id"></small></label>
-                        <label class="admin-field">Recurso<input id="resource-id" type="number" min="1" step="1" required><small class="erro" data-error-for="resource_id"></small></label>
-                        <label class="admin-field">Início<input id="start-at" type="datetime-local" required><small class="erro" data-error-for="start_at"></small></label>
-                        <label class="admin-field">Término<input id="end-at" type="datetime-local" required><small class="erro" data-error-for="end_at"></small></label>
-                        <label class="admin-field">Preço (R$)<input id="item-price" type="number" min="0" step="0.01" required><small class="erro" data-error-for="price"></small></label>
+                        <label class="admin-field">Agendamento *<input id="appointment-id" type="number" min="1" step="1" required><small class="erro" data-error-for="appointment_id"></small></label>
+                        <label class="admin-field">Serviço *<select id="service-id" required><option value="">Carregando serviços...</option></select><small class="erro" data-error-for="service_id"></small></label>
+                        <label class="admin-field">Profissional *<select id="professional-id" required><option value="">Carregando profissionais...</option></select><small class="erro" data-error-for="professional_id"></small></label>
+                        <label class="admin-field">Recurso *<select id="resource-id" required><option value="">Carregando recursos...</option></select><small class="erro" data-error-for="resource_id"></small></label>
+                        <label class="admin-field">Início *<input id="start-at" type="datetime-local" required><small class="erro" data-error-for="start_at"></small></label>
+                        <label class="admin-field">Término *<input id="end-at" type="datetime-local" required><small class="erro" data-error-for="end_at"></small></label>
+                        <label class="admin-field">Preço (R$) *<input id="item-price" type="number" min="0" step="0.01" required><small class="erro" data-error-for="price"></small></label>
                     </div>
                     <div class="item-form-actions"><button class="outline-button" id="cancel-item-bottom" type="button">CANCELAR</button><button class="gold-button" id="save-item" type="submit">SALVAR ITEM <span>→</span></button></div>
                 </form>
@@ -84,6 +86,11 @@
         </div>
     </div>
     <div id="item-notifications" class="item-notifications" role="status" aria-live="polite"></div>
+    <script src="js/types/appointment-types.js"></script>
+    <script src="js/api/service-api.js"></script>
+    <script src="js/api/professional-api.js"></script>
+    <script src="js/api/resource-api.js"></script>
+    <script src="js/api/appointment-api.js"></script>
     <script src="js/api/appointments-items-api.js"></script>
     <script src="js/appointments-items-admin.js"></script>
 </body>

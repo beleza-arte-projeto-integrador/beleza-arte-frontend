@@ -1,4 +1,122 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Pagamentos | Beleza & Arte</title><link rel="stylesheet" href="css/painel-admin.css"></head>
-<body><header class="admin-header"><a class="brand" href="painel-admin.html"><img src="images/logo.png" alt="Beleza & Arte"><span><strong>BELEZA & ARTE</strong><small>PAINEL DE GESTÃO</small></span></a><div class="header-user"><span class="avatar">A</span><span><strong>Administrador</strong><small>Gestão do salão</small></span><a href="index.html">Sair</a></div></header><div class="admin-layout"><aside class="admin-sidebar"><p class="menu-label">MENU PRINCIPAL</p><a href="painel-admin.html"><span>▦</span> Visão geral</a><a href="profissionais-admin.html"><span>♙</span> Profissionais</a><a href="servicos-admin.html"><span>✦</span> Serviços</a><a href="resources-admin.html"><span>▣</span> Recursos</a><a href="itens-agendamento-admin.html"><span>◷</span> Itens de agendamento</a><a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a><a class="active" href="pagamentos-admin.html"><span>R$</span> Pagamentos</a><a href="relatorios-admin.html"><span>▥</span> Relatórios</a><p class="menu-label">ATALHOS</p><a href="cadastro-profissional-admin.html"><span>＋</span> Cadastrar profissional</a><a href="agendamento.html"><span>＋</span> Novo agendamento</a><a href="index.html"><span>←</span> Voltar ao site</a></aside><main class="admin-main"><div class="page-heading"><div><p class="eyebrow">CONTROLE FINANCEIRO</p><h1>Pagamentos</h1><p>Acompanhe os recebimentos dos atendimentos realizados.</p></div><button class="gold-button">EXPORTAR RELATÓRIO ↓</button></div><section class="metric-grid three"><article class="metric-card"><span class="metric-icon">R$</span><div><small>RECEBIDO ESTE MÊS</small><strong>R$ 12.840</strong><p class="positive">↑ 16% <span>vs. mês anterior</span></p></div></article><article class="metric-card"><span class="metric-icon">◷</span><div><small>PAGAMENTOS PENDENTES</small><strong>R$ 1.280</strong><p class="warning">04 atendimentos</p></div></article><article class="metric-card"><span class="metric-icon">✓</span><div><small>TAXA DE RECEBIMENTO</small><strong>92%</strong><p class="positive">Acima da meta</p></div></article></section><section class="panel-card table-card"><div class="panel-heading"><div><h2>Últimos pagamentos</h2><p>Movimentações financeiras recentes</p></div><select><option>Todos os status</option><option>Pago</option><option>Pendente</option></select></div><div class="payment-table"><div class="table-row table-head"><span>CLIENTE</span><span>DATA</span><span>SERVIÇO</span><span>VALOR</span><span>STATUS</span></div><div class="table-row"><strong>Mariana Oliveira</strong><span>09/11/2026</span><span>Corte de cabelo</span><strong>R$ 50,00</strong><span class="tag paid">Pago</span></div><div class="table-row"><strong>Juliana Santos</strong><span>09/11/2026</span><span>Manicure</span><strong>R$ 60,00</strong><span class="tag waiting">Pendente</span></div><div class="table-row"><strong>Larissa Mendes</strong><span>08/11/2026</span><span>Mechas / Coloração</span><strong>R$ 250,00</strong><span class="tag paid">Pago</span></div><div class="table-row"><strong>Carolina Alves</strong><span>08/11/2026</span><span>Limpeza de pele</span><strong>R$ 150,00</strong><span class="tag cancelled">Cancelado</span></div></div></section></main></div></body></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamentos | Beleza & Arte</title>
+    <link rel="stylesheet" href="css/painel-admin.css">
+    <link rel="stylesheet" href="css/servicos-admin.css">
+    <link rel="stylesheet" href="css/pagamentos-admin.css">
+    <script src="js/loading.js"></script>
+</head>
+<body>
+    <header class="admin-header">
+        <a class="brand" href="painel-admin.html"><img src="images/logo.png" alt="Beleza & Arte"><span><strong>BELEZA & ARTE</strong><small>PAINEL DE GESTÃO</small></span></a>
+        <div class="header-user"><span class="avatar">A</span><span><strong>Administrador</strong><small>Gestão do salão</small></span><a href="index.html">Sair</a></div>
+    </header>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <p class="menu-label">MENU PRINCIPAL</p>
+            <a href="painel-admin.html"><span>▦</span> Visão geral</a>
+            <a href="profissionais-admin.html"><span>♙</span> Profissionais</a>
+            <a href="servicos-admin.html"><span>✦</span> Serviços</a>
+            <a href="resources-admin.html"><span>▣</span> Recursos</a>
+            <a href="clients-admin.html"><span>♙</span> Clientes</a>
+            <a href="itens-agendamento-admin.html"><span>◷</span> Itens de agendamento</a>
+            <a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a>
+            <a class="active" href="pagamentos-admin.html"><span>R$</span> Pagamentos</a>
+
+            <p class="menu-label">ATALHOS</p>
+            <a href="cadastro-profissional-admin.html"><span>＋</span> Cadastrar profissional</a>
+            <a href="remarcacao-admin.html#novo"><span>＋</span> Novo agendamento</a>
+            <a href="index.html"><span>←</span> Voltar ao site</a>
+        </aside>
+        <main class="admin-main">
+            <div class="page-heading">
+                <div><p class="eyebrow">CONTROLE FINANCEIRO</p><h1>Pagamentos</h1><p>Acompanhe os recebimentos dos atendimentos realizados.</p></div>
+                <button class="gold-button" id="export-payments" type="button">EXPORTAR RELATÓRIO ↓</button>
+            </div>
+
+            <div class="payment-month-bar">
+                <label class="admin-field payment-month-field">Mês das métricas<input id="payment-month" type="month" aria-label="Mês das métricas"></label>
+                <span class="loading-indicator" id="summary-loading" hidden>Carregando métricas...</span>
+            </div>
+            <p id="summary-error" class="payment-error" role="alert" hidden></p>
+            <section class="metric-grid three" aria-label="Métricas do mês">
+                <article class="metric-card"><span class="metric-icon">R$</span><div><small id="metric-received-label">RECEBIDO ESTE MÊS</small><strong id="metric-received">—</strong><p id="metric-received-change" class="neutral">—</p></div></article>
+                <article class="metric-card"><span class="metric-icon">◷</span><div><small>PAGAMENTOS PENDENTES</small><strong id="metric-pending">—</strong><p id="metric-pending-count" class="warning">—</p></div></article>
+                <article class="metric-card"><span class="metric-icon">✓</span><div><small>TAXA DE RECEBIMENTO</small><strong id="metric-rate">—</strong><p id="metric-rate-note" class="neutral">—</p></div></article>
+            </section>
+
+            <section class="panel-card payment-revenue-card" aria-labelledby="revenue-title">
+                <div class="panel-heading">
+                    <div><h2 id="revenue-title">Faturamento</h2><p id="revenue-range">Valores recebidos no período</p></div>
+                    <div class="revenue-tabs" role="tablist" aria-label="Período do faturamento">
+                        <button type="button" role="tab" data-period="DAY" aria-selected="true" class="active">Hoje</button>
+                        <button type="button" role="tab" data-period="LAST_7_DAYS" aria-selected="false">7 dias</button>
+                        <button type="button" role="tab" data-period="MONTH" aria-selected="false">Mês</button>
+                        <button type="button" role="tab" data-period="YEAR" aria-selected="false">Ano</button>
+                    </div>
+                </div>
+                <div class="revenue-values" id="revenue-values" aria-live="polite">
+                    <div><small>RECEBIDO</small><strong id="revenue-received">—</strong></div>
+                    <div><small>PERÍODO ANTERIOR</small><strong id="revenue-previous">—</strong></div>
+                    <div><small>VARIAÇÃO</small><strong id="revenue-change" class="neutral">—</strong></div>
+                </div>
+            </section>
+
+            <section class="panel-card table-card">
+                <div class="panel-heading">
+                    <div><h2>Últimos pagamentos</h2><p id="payment-count">Movimentações financeiras recentes</p></div>
+                    <div class="payment-filter">
+                        <span class="loading-indicator" id="payment-loading" hidden>Carregando...</span>
+                        <select id="payment-status-filter" aria-label="Filtrar por status">
+                            <option value="">Todos os status</option>
+                            <option value="PENDENTE">Pendente</option>
+                            <option value="PAGO">Pago</option>
+                            <option value="CANCELADO">Cancelado</option>
+                            <option value="ESTORNADO">Estornado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="payment-table">
+                    <div class="table-row table-head"><span>CLIENTE</span><span>DATA DO ATENDIMENTO</span><span>SERVIÇO(S)</span><span>VALOR</span><span>FORMA</span><span>STATUS</span><span>AÇÕES</span></div>
+                    <div id="payment-list"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="payment-pay-modal" class="delete-modal payment-modal" hidden role="dialog" aria-modal="true" aria-labelledby="payment-pay-title">
+        <div class="delete-modal-backdrop" data-close-payment-modal></div>
+        <form class="delete-modal-card" id="payment-pay-form" novalidate>
+            <button class="delete-modal-close" type="button" data-close-payment-modal aria-label="Fechar">×</button>
+            <span class="delete-modal-icon">R$</span>
+            <h2 id="payment-pay-title">Registrar pagamento</h2>
+            <p>Confira os dados e escolha a forma de pagamento.</p>
+            <dl class="payment-modal-details">
+                <div><dt>Cliente</dt><dd id="payment-pay-client">—</dd></div>
+                <div><dt>Serviço(s)</dt><dd id="payment-pay-services">—</dd></div>
+                <div><dt>Data do atendimento</dt><dd id="payment-pay-date">—</dd></div>
+                <div><dt>Valor</dt><dd id="payment-pay-amount">—</dd></div>
+            </dl>
+            <label class="admin-field">Forma de pagamento *
+                <select id="payment-pay-method" required>
+                    <option value="PIX">Pix</option>
+                    <option value="CARTAO_CREDITO">Cartão de crédito</option>
+                    <option value="CARTAO_DEBITO">Cartão de débito</option>
+                    <option value="DINHEIRO">Dinheiro</option>
+                </select>
+            </label>
+            <div class="delete-modal-actions">
+                <button class="outline-button" type="button" data-close-payment-modal>Cancelar</button>
+                <button class="gold-button" id="confirm-payment" type="submit">CONFIRMAR PAGAMENTO</button>
+            </div>
+        </form>
+    </div>
+    <div id="payment-notifications" class="service-notifications" role="status" aria-live="polite" aria-atomic="true"></div>
+    <script src="js/types/payment-types.js"></script>
+    <script src="js/api/payment-api.js"></script>
+    <script src="js/pagamentos-admin.js"></script>
+</body>
+</html>

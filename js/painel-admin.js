@@ -48,11 +48,34 @@ document.addEventListener("DOMContentLoaded", () => {
         window.setTimeout(() => notification.remove(), 200);
     }
 
+    const editSpecialty = document.getElementById("edit-specialty");
+
+    function addOption(select, value) {
+        if (!value || [...select.options].some(option => option.value === value)) return;
+        select.add(new Option(value, value));
+    }
+
+    // Especialidades = categorias dos serviços cadastrados. O filtro inclui também
+    // as especialidades antigas, para que profissionais já cadastrados continuem aparecendo.
+    async function loadSpecialtyOptions() {
+        try {
+            const [categories, searchable] = await Promise.all([
+                professionalApi.specialties(),
+                professionalApi.searchableSpecialties()
+            ]);
+            searchable.forEach(value => addOption(specialty, value));
+            categories.forEach(value => addOption(editSpecialty, value));
+        } catch {
+            showNotification("Não foi possível carregar as especialidades (categorias de serviço).", "error");
+        }
+    }
+
     function openEditModal(professional) {
         professionalBeingEdited = professional;
         formError.textContent = "";
         document.getElementById("edit-name").value = professional.name || "";
-        document.getElementById("edit-specialty").value = professional.specialty || "";
+        addOption(editSpecialty, professional.specialty); // mantém valores fora da lista
+        editSpecialty.value = professional.specialty || "";
         document.getElementById("edit-phone").value = professional.phone || "";
         document.getElementById("edit-email").value = professional.email || "";
         document.getElementById("edit-cpf").value = professional.cpf || "";
@@ -97,7 +120,43 @@ document.addEventListener("DOMContentLoaded", () => {
         `).join("");
     }
 
+    // O backend só encontra pelo nome completo (searchName é busca exata).
+    // Para achar por parte do nome ("anny" -> "Anny Gabrielly"), a lista completa é
+    // carregada uma vez e filtrada aqui. Ela é descartada após editar ou excluir.
+    let allProfessionalsRequest = null;
+
+    function allProfessionals() {
+        if (!allProfessionalsRequest) {
+            allProfessionalsRequest = professionalApi.list().catch(error => {
+                allProfessionalsRequest = null;
+                throw error;
+            });
+        }
+        return allProfessionalsRequest;
+    }
+
+    function forgetAllProfessionals() {
+        allProfessionalsRequest = null;
+    }
+
+    // Minúsculas e sem acento: "Ánny" e "anny" são iguais na busca.
+    function normalizeText(value) {
+        return String(value || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+    }
+
+    async function searchByName(query) {
+        const wanted = normalizeText(query);
+        const items = await allProfessionals();
+        return items
+            .filter(item => normalizeText(item.name).includes(wanted))
+            .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "pt-BR"));
+    }
+
+    // Ignora respostas antigas quando a pessoa continua digitando.
+    let lastSearch = 0;
+
     async function loadProfessionals() {
+        const searchId = ++lastSearch;
         setStatus("Carregando profissionais...");
         list.setAttribute("aria-busy", "true");
         try {
@@ -114,15 +173,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 setStatus("Digite pelo menos 2 caracteres para pesquisar pelo nome.", "info");
                 return;
             }
-            professionals = query
-                ? await professionalApi.search("name", query)
+            const found = query
+                ? await searchByName(query)
                 : await professionalApi.search("specialty", specialty.value);
+            if (searchId !== lastSearch) return;
+            professionals = found;
             if (query && specialty.value) {
                 professionals = professionals.filter(item => item.specialty === specialty.value);
             }
             render(professionals);
             setStatus(professionals.length ? `${professionals.length} profissional(is) encontrado(s).` : "Nenhum profissional encontrado.");
         } catch (error) {
+            if (searchId !== lastSearch) return;
             professionals = [];
             list.innerHTML = "";
             setStatus("");
@@ -175,6 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         try {
             await professionalApi.update(updatedProfessional);
+            forgetAllProfessionals();
             closeEditModal();
             showNotification("Profissional atualizada com sucesso.", "success");
             await loadProfessionals();
@@ -196,6 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeDeleteModal();
         try {
             await professionalApi.remove(professional.id);
+            forgetAllProfessionals();
             showNotification("Profissional excluída com sucesso.", "success");
             await loadProfessionals();
         } catch (error) {
@@ -203,5 +267,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    loadSpecialtyOptions();
     loadProfessionals();
 });

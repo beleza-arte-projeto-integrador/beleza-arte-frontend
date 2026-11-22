@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Gestão | Beleza & Arte</title>
     <link rel="stylesheet" href="css/painel-admin.css">
+    <link rel="stylesheet" href="css/visao-geral.css">
+    <script src="js/loading.js"></script>
 </head>
 <body>
     <header class="admin-header">
@@ -22,35 +24,84 @@
             <a href="profissionais-admin.html"><span>♙</span> Profissionais</a>
             <a href="servicos-admin.html"><span>✦</span> Serviços</a>
             <a href="resources-admin.html"><span>▣</span> Recursos</a>
+            <a href="clients-admin.html"><span>♙</span> Clientes</a>
             <a href="remarcacao-admin.html"><span>◷</span> Agendamentos</a>
             <a href="itens-agendamento-admin.html"><span>◷</span> Itens de agendamento</a>
             <a href="pagamentos-admin.html"><span>R$</span> Pagamentos</a>
-            <a href="relatorios-admin.html"><span>▥</span> Relatórios</a>
+
             <p class="menu-label">ATALHOS</p>
             <a href="cadastro-profissional-admin.html"><span>＋</span> Cadastrar profissional</a>
-            <a href="agendamento.html"><span>＋</span> Novo agendamento</a>
+            <a href="remarcacao-admin.html#novo"><span>＋</span> Novo agendamento</a>
             <a href="index.html"><span>←</span> Voltar ao site</a>
         </aside>
 
         <main class="admin-main">
-            <div class="page-heading"><div><p class="eyebrow">SEGUNDA-FEIRA, 09 DE NOVEMBRO</p><h1>Visão geral</h1><p>Acompanhe os principais movimentos do salão hoje.</p></div><a class="gold-button" href="remarcacao-admin.html">VER AGENDA <span>→</span></a></div>
-            <section class="metric-grid">
-                <article class="metric-card"><span class="metric-icon">▣</span><div><small>AGENDAMENTOS HOJE</small><strong>18</strong><p class="positive">↑ 12% <span>vs. ontem</span></p></div></article>
-                <article class="metric-card"><span class="metric-icon">♙</span><div><small>PROFISSIONAIS ATIVOS</small><strong>08</strong><p class="neutral">Equipe completa</p></div></article>
-                <article class="metric-card"><span class="metric-icon">R$</span><div><small>RECEITA DO DIA</small><strong>R$ 1.240</strong><p class="positive">↑ 8% <span>vs. ontem</span></p></div></article>
-                <article class="metric-card"><span class="metric-icon">!</span><div><small>PAGAMENTOS PENDENTES</small><strong>04</strong><p class="warning">Acompanhar</p></div></article>
+            <div class="page-heading"><div><p class="eyebrow" id="today-label">VISÃO GERAL</p><h1>Visão geral</h1><p>Relatório gerencial do salão no período escolhido.</p></div><a class="gold-button" href="remarcacao-admin.html">VER AGENDA <span>→</span></a></div>
+
+            <form class="report-filters" id="report-filters" novalidate>
+                <label class="admin-field">Data inicial<input id="report-start" type="date" required></label>
+                <label class="admin-field">Data final<input id="report-end" type="date" required></label>
+                <label class="admin-field report-professional-field">Profissional
+                    <select id="report-professional"><option value="">Todas (salão inteiro)</option></select>
+                </label>
+                <button class="gold-button" id="report-submit" type="submit">GERAR RELATÓRIO</button>
+                <span class="report-loading" id="report-loading" role="status" hidden>Carregando relatório...</span>
+            </form>
+            <p class="report-note" id="report-professional-note" hidden></p>
+            <p class="report-period" id="report-period" aria-live="polite"></p>
+            <p class="report-error" id="report-error" role="alert" hidden></p>
+
+            <section class="panel-card report-empty" id="report-empty" hidden>
+                <strong>Nenhum agendamento no período</strong>
+                <span>Escolha outro período ou outra profissional e gere o relatório novamente.</span>
             </section>
 
-            <section class="content-grid">
-                <article class="panel-card schedule-card"><div class="panel-heading"><div><h2>Agenda de hoje</h2><p>Próximos atendimentos do salão</p></div><a href="remarcacao-admin.html">Ver agenda completa →</a></div>
-                    <div class="appointment"><span class="time">09:00</span><span class="appointment-avatar">M</span><div><strong>Mariana Oliveira</strong><small>Corte de cabelo · Camila</small></div><span class="tag confirmed">Confirmado</span></div>
-                    <div class="appointment"><span class="time">10:30</span><span class="appointment-avatar rose">J</span><div><strong>Juliana Santos</strong><small>Manicure · Camila</small></div><span class="tag waiting">Aguardando</span></div>
-                    <div class="appointment"><span class="time">13:00</span><span class="appointment-avatar blue">L</span><div><strong>Larissa Mendes</strong><small>Mechas / Coloração · Anna</small></div><span class="tag confirmed">Confirmado</span></div>
-                    <div class="appointment"><span class="time">15:30</span><span class="appointment-avatar purple">C</span><div><strong>Carolina Alves</strong><small>Limpeza de pele · Juliana</small></div><span class="tag confirmed">Confirmado</span></div>
-                </article>
-                <article class="panel-card quick-card"><div class="panel-heading"><div><h2>Acessos rápidos</h2><p>Gerencie as áreas do salão</p></div></div><a class="quick-link" href="profissionais-admin.html"><span>♙</span><div><strong>Profissionais</strong><small>Cadastre e gerencie a equipe</small></div><b>→</b></a><a class="quick-link" href="servicos-admin.html"><span>✦</span><div><strong>Serviços</strong><small>Cadastre e gerencie o catálogo</small></div><b>→</b></a><a class="quick-link" href="resources-admin.html"><span>▣</span><div><strong>Recursos</strong><small>Gerencie os recursos do salão</small></div><b>→</b></a><a class="quick-link" href="pagamentos-admin.html"><span>R$</span><div><strong>Pagamentos</strong><small>Acompanhe recebimentos</small></div><b>→</b></a><a class="quick-link" href="relatorios-admin.html"><span>▥</span><div><strong>Relatórios</strong><small>Veja os resultados do salão</small></div><b>→</b></a></article>
+            <div id="report-content" hidden>
+                <h2 class="report-section-title">AGENDAMENTOS</h2>
+                <section class="metric-grid five" aria-label="Indicadores de agendamentos">
+                    <article class="metric-card"><span class="metric-icon">▣</span><div><small>TOTAL DE AGENDAMENTOS</small><strong id="metric-total">—</strong><p class="neutral" id="metric-total-note">—</p></div></article>
+                    <article class="metric-card"><span class="metric-icon">✓</span><div><small>CONCLUÍDOS</small><strong id="metric-completed">—</strong><p class="positive">Atendimentos finalizados</p></div></article>
+                    <article class="metric-card"><span class="metric-icon">×</span><div><small>CANCELADOS</small><strong id="metric-cancelled">—</strong><p class="negative" id="metric-cancelled-rate">—</p></div></article>
+                    <article class="metric-card"><span class="metric-icon">!</span><div><small>FALTAS</small><strong id="metric-noshow">—</strong><p class="warning" id="metric-noshow-rate">—</p></div></article>
+                    <article class="metric-card"><span class="metric-icon">♙</span><div><small>CLIENTES ÚNICOS</small><strong id="metric-clients">—</strong><p class="neutral">Clientes diferentes atendidos</p></div></article>
+                </section>
+
+                <h2 class="report-section-title">FATURAMENTO E OCUPAÇÃO</h2>
+                <section class="metric-grid" aria-label="Indicadores de faturamento e ocupação">
+                    <article class="metric-card"><span class="metric-icon">R$</span><div><small>FATURAMENTO PREVISTO</small><strong id="metric-expected">—</strong><p class="neutral">Agendamentos válidos</p></div></article>
+                    <article class="metric-card"><span class="metric-icon">R$</span><div><small>FATURAMENTO CONCLUÍDO</small><strong id="metric-completed-revenue">—</strong><p class="neutral">Agendamentos concluídos</p></div></article>
+                    <article class="metric-card"><span class="metric-icon">◎</span><div><small>TICKET MÉDIO</small><strong id="metric-ticket">—</strong><p class="neutral">Por agendamento válido</p></div></article>
+                    <article class="metric-card"><span class="metric-icon">◷</span><div><small>TAXA DE OCUPAÇÃO</small><strong id="metric-occupancy">—</strong><p class="neutral" id="metric-occupancy-note">—</p></div></article>
+                </section>
+
+                <section class="report-grid">
+                    <article class="panel-card"><div class="panel-heading"><div><h2>Serviços por dia da semana</h2><p>Quantidade de serviços válidos</p></div></div><div id="chart-weekday"></div></article>
+                    <article class="panel-card"><div class="panel-heading"><div><h2>Serviços por horário</h2><p>Quantidade de serviços por horário de início</p></div></div><div id="chart-hour"></div></article>
+                </section>
+
+                <section class="report-grid">
+                    <article class="panel-card table-card report-services">
+                        <div class="panel-heading"><div><h2>Ranking de serviços</h2><p>Mais realizados no período</p></div></div>
+                        <div class="table-row table-head"><span>SERVIÇO</span><span>QUANTIDADE</span><span>FATURAMENTO</span></div>
+                        <div class="report-table-body" id="report-services"></div>
+                    </article>
+                    <article class="panel-card table-card report-professionals">
+                        <div class="panel-heading"><div><h2>Desempenho por profissional</h2><p>Serviços, faturamento, cancelamentos e faltas</p></div></div>
+                        <div class="table-row table-head"><span>PROFISSIONAL</span><span>SERVIÇOS</span><span>FATURAMENTO</span><span>CANCEL.</span><span>FALTAS</span></div>
+                        <div class="report-table-body" id="report-professionals"></div>
+                    </article>
+                </section>
+            </div>
+
+            <section class="quick-section">
+                <article class="panel-card quick-card"><div class="panel-heading"><div><h2>Acessos rápidos</h2><p>Gerencie as áreas do salão</p></div></div><a class="quick-link" href="profissionais-admin.html"><span>♙</span><div><strong>Profissionais</strong><small>Cadastre e gerencie a equipe</small></div><b>→</b></a><a class="quick-link" href="servicos-admin.html"><span>✦</span><div><strong>Serviços</strong><small>Cadastre e gerencie o catálogo</small></div><b>→</b></a><a class="quick-link" href="resources-admin.html"><span>▣</span><div><strong>Recursos</strong><small>Gerencie os recursos do salão</small></div><b>→</b></a><a class="quick-link" href="clients-admin.html"><span>♙</span><div><strong>Clientes</strong><small>Gerencie cadastros e dados pessoais</small></div><b>→</b></a><a class="quick-link" href="pagamentos-admin.html"><span>R$</span><div><strong>Pagamentos</strong><small>Acompanhe recebimentos</small></div><b>→</b></a></article>
             </section>
         </main>
     </div>
+    <script src="js/types/report-types.js"></script>
+    <script src="js/api/service-api.js"></script>
+    <script src="js/api/professional-api.js"></script>
+    <script src="js/api/report-api.js"></script>
+    <script src="js/visao-geral.js"></script>
 </body>
 </html>

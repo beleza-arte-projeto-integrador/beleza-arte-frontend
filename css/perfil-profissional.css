@@ -188,6 +188,17 @@ body {
     box-shadow: 0 0 0 3px rgba(214, 160, 56, .10);
 }
 
+.campo input[readonly] {
+    background: #f4f4f4;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.campo input[readonly]:focus {
+    border-color: #ddd;
+    box-shadow: none;
+}
+
 .campo input.invalido,
 .campo select.invalido {
     border-color: var(--vermelho);

@@ -1,0 +1,45 @@
+.negative{color:var(--red)}
+.payment-month-bar{display:flex;align-items:flex-end;gap:14px;margin:-12px 0 18px}
+.payment-month-field{width:200px}
+.payment-error{margin-bottom:15px;padding:12px 15px;background:#fff0ee;border:1px solid #efc8c2;border-radius:5px;color:#a33f35;font-size:12px}
+.payment-error[hidden]{display:none}
+
+.payment-revenue-card{margin-bottom:25px}
+.revenue-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.revenue-tabs button{background:#fff;border:1px solid #ddd7cc;color:#777;padding:8px 14px;border-radius:4px;font-size:11px;cursor:pointer}
+.revenue-tabs button.active{background:var(--gold);border-color:var(--gold);color:#111;font-weight:bold}
+.revenue-tabs button:disabled{opacity:.6;cursor:wait}
+.revenue-values{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.revenue-values>div{padding:16px;border:1px solid #eee;border-radius:6px;background:#faf9f6}
+.revenue-values small{display:block;color:#888;font-size:10px;letter-spacing:.5px;margin-bottom:8px}
+.revenue-values strong{display:block;font-size:20px;font-weight:600}
+
+.payment-filter{display:flex;align-items:center;gap:12px}
+.payment-table .table-row{grid-template-columns:1.2fr 1fr 1.5fr .8fr .9fr .7fr 160px}
+.payment-table .table-row .tag{width:max-content}
+.payment-table .table-row small{display:block;color:#888;font-size:10px;margin-top:4px}
+.payment-actions{display:flex;justify-content:flex-end}
+.payment-actions button{background:transparent;border:1px solid #b3d2c4;color:#27885f;padding:8px 9px;border-radius:3px;font-size:9px;letter-spacing:.3px;cursor:pointer}
+.payment-actions button:disabled{opacity:.55;cursor:wait}
+.payment-actions .no-action{color:#bbb;font-size:11px}
+.empty-payments{min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#777;font-size:12px;text-align:center;padding:20px;border-top:1px solid #eee}
+.empty-payments strong{color:#333;font-size:13px}
+.empty-payments.error strong{color:#a33f35}
+
+.payment-modal .delete-modal-icon{background:#e0f3e8;color:#27885f;font-size:15px}
+.payment-modal .delete-modal-card{width:min(470px,100%)}
+.payment-modal .admin-field{text-align:left;margin-bottom:22px}
+.payment-modal .gold-button{min-height:42px}
+.payment-modal .gold-button:disabled{opacity:.6;cursor:wait}
+.payment-modal-details{display:grid;gap:10px;margin:0 0 20px;padding:14px 16px;background:#faf9f6;border:1px solid #eee;border-radius:6px;text-align:left}
+.payment-modal-details>div{display:flex;justify-content:space-between;gap:16px;font-size:12px}
+.payment-modal-details dt{color:#888}
+.payment-modal-details dd{color:#333;font-weight:bold;text-align:right;overflow-wrap:anywhere}
+
+@media(max-width:700px){
+    .payment-month-bar{margin-top:0}
+    .payment-month-field{width:100%}
+    .revenue-values{grid-template-columns:1fr}
+    .payment-table .table-row{min-width:960px}
+    .payment-filter{width:100%;justify-content:space-between}
+}

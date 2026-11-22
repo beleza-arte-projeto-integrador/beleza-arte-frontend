@@ -1,0 +1,48 @@
+/* Relatório gerencial da Visão geral. Depende de css/painel-admin.css. */
+.report-filters{display:flex;align-items:flex-end;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+.report-filters .admin-field{width:180px}
+.report-filters .report-professional-field{width:240px}
+.report-filters .gold-button{min-height:44px}
+.report-filters .gold-button:disabled{opacity:.6;cursor:wait}
+.report-loading{color:var(--gold);font-size:11px;align-self:center}
+.report-loading[hidden],.report-note[hidden],.report-error[hidden],.report-empty[hidden],#report-content[hidden]{display:none}
+.report-note{color:#888;font-size:11px;margin-bottom:12px}
+.report-period{color:#888;font-size:12px;margin-bottom:20px}
+.report-error{margin-bottom:18px;padding:12px 15px;background:#fff0ee;border:1px solid #efc8c2;border-radius:5px;color:#a33f35;font-size:12px}
+.report-empty{margin-bottom:25px;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:#777;font-size:12px}
+.report-empty strong{color:#333;font-size:14px}
+
+.metric-grid.five{grid-template-columns:repeat(5,1fr)}
+.metric-card strong{overflow-wrap:anywhere}
+.report-section-title{font-size:12px;letter-spacing:1px;color:#888;margin:4px 0 12px}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:25px}
+.negative{color:var(--red)}
+
+.report-services .table-row{grid-template-columns:2fr .7fr 1fr}
+.report-professionals .table-row{grid-template-columns:1.6fr .7fr 1fr .8fr .6fr}
+.report-rank{display:inline-block;min-width:28px;color:var(--gold);font-size:11px}
+.report-table-empty{padding:30px 24px;border-top:1px solid #eee;color:#888;font-size:12px;text-align:center}
+.report-table-body{max-height:380px;overflow-y:auto}
+
+/* Barras verticais de série única */
+.bar-chart{display:flex;align-items:stretch;gap:6px;height:230px;padding-top:8px}
+.bar-col{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;outline:0}
+.bar-track{position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;border-bottom:1px solid #ddd;background:repeating-linear-gradient(to top,transparent 0,transparent 45px,#f1eee8 45px,#f1eee8 46px)}
+.bar{display:block;width:min(70%,42px);background:var(--gold);border-radius:4px 4px 0 0;transition:background .15s}
+.bar-value{font-size:11px;color:#333;font-weight:bold;margin-bottom:4px}
+.bar-label{margin-top:8px;text-align:center;font-size:10px;color:#888;white-space:nowrap}
+.bar-col:hover .bar,.bar-col:focus .bar{background:#b9852a}
+.bar-col:focus-visible .bar-label{color:#333;font-weight:bold}
+.bar-col::after{content:attr(data-tooltip);position:absolute;bottom:calc(100% - 4px);left:50%;transform:translateX(-50%);padding:6px 9px;border-radius:4px;background:#171717;color:#fff;font-size:11px;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s;z-index:2}
+.bar-col:hover::after,.bar-col:focus::after{opacity:1;visibility:visible}
+
+@media(max-width:1300px){.metric-grid.five{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1100px){.report-grid{grid-template-columns:1fr}.metric-grid.five{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){
+    .metric-grid.five{grid-template-columns:1fr}
+    .report-filters .admin-field,.report-filters .report-professional-field,.report-filters .gold-button{width:100%}
+    .report-services .table-row,.report-professionals .table-row{min-width:560px}
+    .bar-chart{overflow-x:auto}
+    .bar-col{min-width:34px}
+}
+.quick-section{margin-bottom:25px}
