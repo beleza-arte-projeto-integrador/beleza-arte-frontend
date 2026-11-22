@@ -2,6 +2,8 @@
   "name": "beleza-arte-frontend",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "demo": "node server.js --demo=hybrid",
+    "demo:offline": "node server.js --demo=offline"
   }
 }

@@ -7,6 +7,12 @@ const PROXY_PREFIX = "/api";
 const BACKEND_URL = process.env.API_BASE_URL || "http://localhost:8081/v1/api/salao";
 const PORT = Number(process.env.PORT) || 3000;
 
+// Modo demonstração (plano C): "node server.js --demo=hybrid" ou "--demo=offline"
+// (npm run demo / npm run demo:offline). Sem a opção, o servidor funciona como antes.
+const DEMO_MODE = (process.argv.find(arg => arg.startsWith("--demo=")) || "").slice("--demo=".length) || null;
+const mockApi = DEMO_MODE ? require("./mock-api").createMockApi({ mode: DEMO_MODE, backendUrl: BACKEND_URL }) : null;
+const demoBanner = DEMO_MODE ? require("./mock-api/banner").bannerHtml(DEMO_MODE) : "";
+
 const MIME_TYPES = {
     ".css": "text/css; charset=utf-8",
     ".html": "text/html; charset=utf-8",
@@ -92,6 +98,20 @@ function serveStatic(request, response) {
         }
 
         const contentType = MIME_TYPES[path.extname(filePath).toLowerCase()] || "application/octet-stream";
+
+        // Modo demonstração: mostra o aviso "Modo demonstração" em todas as páginas.
+        if (demoBanner && path.extname(filePath).toLowerCase() === ".html") {
+            fs.readFile(filePath, "utf8", (readError, html) => {
+                if (readError) {
+                    sendText(response, 500, "Erro ao ler o arquivo.");
+                    return;
+                }
+                response.writeHead(200, { "Content-Type": contentType });
+                response.end(html.includes("</body>") ? html.replace("</body>", `${demoBanner}</body>`) : html + demoBanner);
+            });
+            return;
+        }
+
         response.writeHead(200, { "Content-Type": contentType });
         fs.createReadStream(filePath).pipe(response);
     });
@@ -99,6 +119,12 @@ function serveStatic(request, response) {
 
 const server = http.createServer((request, response) => {
     if (request.url === PROXY_PREFIX || request.url.startsWith(`${PROXY_PREFIX}/`) || request.url.startsWith(`${PROXY_PREFIX}?`)) {
+        if (mockApi) {
+            // Modo demonstração: o mock responde as rotas dele; as demais seguem para o backend.
+            mockApi.handle(request, response, request.url.slice(PROXY_PREFIX.length))
+                .then(handled => { if (!handled) proxyToBackend(request, response); });
+            return;
+        }
         proxyToBackend(request, response);
         return;
     }
@@ -114,4 +140,8 @@ const server = http.createServer((request, response) => {
 server.listen(PORT, "localhost", () => {
     console.log(`[Frontend] http://localhost:${PORT}`);
     console.log(`[Proxy] /api/* -> ${BACKEND_URL}/*`);
+    if (mockApi) {
+        console.log(`[Demo] Modo demonstração ${mockApi.description}.`);
+        console.log(`[Demo] ${mockApi.mockedRoutes.length} rotas respondidas pelo mock (lista em mock-api/README.md).`);
+    }
 });

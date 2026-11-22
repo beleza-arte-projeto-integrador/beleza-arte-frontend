@@ -2,6 +2,23 @@
 
 Sistema web para um salão de beleza, desenvolvido como Projeto Integrador da faculdade de Análise e Desenvolvimento de Sistemas.
 
+## Modo demonstração (alternativa temporária)
+
+A tabela de agendamentos do backend foi reestruturada e a atualização do banco compartilhado ainda está pendente. Enquanto isso, as rotas de agendamento e o relatório gerencial do backend respondem erro. Para que as telas possam ser avaliadas, existe um **modo demonstração**, que responde essas rotas com dados simulados, seguindo o mesmo contrato e as mesmas regras do backend. Nenhuma tela foi alterada para isso.
+
+| Comando | Quando usar |
+|---|---|
+| `npm run demo:offline` | Avaliar só o frontend. Precisa apenas do Node.js; todos os dados são simulados. |
+| `npm run demo` | Com o backend rodando: clientes, profissionais, serviços e recursos vêm do backend; agendamentos, itens, pagamentos e relatório são simulados. |
+| `npm start` | Funcionamento normal, tudo pelo backend (quando o banco estiver atualizado). |
+
+Depois de iniciar, acesse `http://localhost:3000`. No modo demonstração aparece um aviso no canto da tela. Os dados simulados voltam ao estado inicial quando o servidor é reiniciado.
+
+- Login administrativo: `admin@belezaearte.com.br` / `admin123`.
+- Login de profissional (modo offline): usuário `anna`, `sofia`, `camila`, entre outros.
+
+Detalhes, lista completa de rotas simuladas e como remover o modo: [mock-api/README.md](./mock-api/README.md).
+
 ## Integração geral com a API
 
 O frontend se comunica com o backend usando a URL base:
