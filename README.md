@@ -152,7 +152,6 @@ Com o servidor rodando, as telas ficam em `http://localhost:3000/<arquivo>`.
 | Tela | Arquivo |
 |---|---|
 | Login | `login-profissional.html` |
-| Cadastro | `cadastro-profissional.html` |
 | Minha agenda, com avisos de desistência | `meus-agendamentos.html` |
 | Histórico de cancelamentos | `historico-cancelamentos.html` |
 | Meu perfil | `perfil-profissional.html` |
