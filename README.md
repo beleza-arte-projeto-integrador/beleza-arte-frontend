@@ -18,7 +18,7 @@ Este repositório contém o **frontend**. O backend fica em outro repositório d
 - [Integrantes](#integrantes)
 - [Tecnologias](#tecnologias)
 - [Como executar](#como-executar)
-- [Modo demonstração](#modo-demonstração-alternativa-temporária)
+- [Integração com o front-end e modo demonstração](#modo-demonstração-alternativa-temporária)
 - [Telas](#telas)
 - [Estrutura de pastas](#estrutura-de-pastas)
 - [Integração com a API](#integração-com-a-api)
@@ -118,6 +118,56 @@ npm start
 ```
 
 Para apontar para outro endereço de backend, defina a variável `API_BASE_URL` (padrão: `http://localhost:8081/v1/api/salao`).
+
+## Integração com o front-end e modo demonstração
+
+O sistema Beleza & Arte é composto por dois projetos integrados, organizados em repositórios separados:
+
+- **Back-end:** [beleza-arte-back](https://github.com/beleza-arte-projeto-integrador/beleza-arte-back)
+- **Front-end:** [beleza-arte-frontend](https://github.com/beleza-arte-projeto-integrador/beleza-arte-frontend)
+
+### Funcionamento da integração
+
+Normalmente, o front-end consome os endpoints disponibilizados pela API para realizar operações de cadastro, consulta, atualização e exclusão de dados.
+
+Entretanto, devido às inconsistências identificadas na integração do módulo de agendamentos com o banco de dados, foi adotada uma alternativa para viabilizar a apresentação do sistema: o **modo demonstração**, implementado no front-end.
+
+Nesse modo, as funcionalidades são distribuídas da seguinte maneira:
+
+| Funcionalidade | Funcionamento na demonstração |
+| ---------------------------------------- | ----------------------------- |
+| Clientes | Utiliza o back-end real |
+| Profissionais | Utiliza o back-end real |
+| Serviços | Utiliza o back-end real |
+| Recursos | Utiliza o back-end real |
+| Appointments (agendamentos) | Utiliza dados simulados |
+| AppointmentsItems (itens de agendamento) | Utiliza dados simulados |
+| Pagamentos | Utiliza dados simulados |
+| Relatórios | Utiliza dados simulados |
+
+### Por que Appointments e AppointmentsItems são simulados?
+
+Os itens de agendamento dependem da existência de um agendamento, pois cada registro está relacionado a ele por meio do campo `appointment_id`.
+
+Por esse motivo, simular somente os agendamentos não seria suficiente: os itens também precisam utilizar dados simulados para manter a consistência da demonstração.
+
+Assim, as funcionalidades de `Appointments` e `AppointmentsItems` são tratadas em conjunto no front-end.
+
+### Pagamentos e relatórios
+
+Durante o modo demonstração, os módulos de pagamentos e relatórios também utilizam **exclusivamente dados simulados**, mantendo toda a jornada de agendamento integrada aos dados de demonstração.
+
+Dessa forma, esses módulos não consultam nem realizam operações no banco de dados durante a demonstração.
+
+### Observações sobre o modo demonstração
+
+- A simulação acontece exclusivamente no front-end.
+- Não são realizadas operações no banco de dados para os módulos simulados.
+- A estrutura do banco de dados não é alterada pelo modo demonstração.
+- A simulação não substitui a implementação da API do back-end.
+- A interface apresenta um aviso para identificar as funcionalidades que utilizam dados simulados.
+
+Para consultar as instruções de instalação, configuração e execução da interface, acesse o [README do front-end](https://github.com/beleza-arte-projeto-integrador/beleza-arte-frontend).
 
 ## Modo demonstração (alternativa temporária)
 
